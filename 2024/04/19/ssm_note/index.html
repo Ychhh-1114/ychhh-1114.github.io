@@ -1,0 +1,382 @@
+<!DOCTYPE html><html lang="zh-CN" data-theme="light"><head><meta charset="UTF-8"><meta http-equiv="X-UA-Compatible" content="IE=edge"><meta name="viewport" content="width=device-width, initial-scale=1.0,viewport-fit=cover"><title>SSM踩坑笔记 -（在更中） | Yue C.H. Site</title><meta name="author" content="Yue C.H."><meta name="copyright" content="Yue C.H."><meta name="format-detection" content="telephone=no"><meta name="theme-color" content="#ffffff"><meta name="description" content="作用域  把 控制层(controller)的处理好的数据传递给视图层，需要使用作用域：  JSP (1). pageContext 由于主要使用在JSP页面内，因此不常用 作用域：用来在同一个页面的的不同标签之间传递数据 Servlet (1). request 作用域：从发送请求开始，到做出响应结束，即使发生视图之间的跳转，request仍然存在，但当响应返回至浏览器后，request失效 (">
+<meta property="og:type" content="article">
+<meta property="og:title" content="SSM踩坑笔记 -（在更中）">
+<meta property="og:url" content="https://ychhh-1114.github.io/2024/04/19/ssm_note/index.html">
+<meta property="og:site_name" content="Yue C.H. Site">
+<meta property="og:description" content="作用域  把 控制层(controller)的处理好的数据传递给视图层，需要使用作用域：  JSP (1). pageContext 由于主要使用在JSP页面内，因此不常用 作用域：用来在同一个页面的的不同标签之间传递数据 Servlet (1). request 作用域：从发送请求开始，到做出响应结束，即使发生视图之间的跳转，request仍然存在，但当响应返回至浏览器后，request失效 (">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://ychhh-1114.github.io/img/a.jpg">
+<meta property="article:published_time" content="2024-04-19T10:14:21.000Z">
+<meta property="article:modified_time" content="2024-04-21T08:46:17.043Z">
+<meta property="article:author" content="Yue C.H.">
+<meta property="article:tag" content="Java">
+<meta property="article:tag" content="Web">
+<meta property="article:tag" content="SSM">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://ychhh-1114.github.io/img/a.jpg"><link rel="shortcut icon" href="/img/icon.ico"><link rel="canonical" href="https://ychhh-1114.github.io/2024/04/19/ssm_note/index.html"><link rel="preconnect" href="//cdn.jsdelivr.net"/><link rel="preconnect" href="//busuanzi.ibruce.info"/><link rel="stylesheet" href="/css/index.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free/css/all.min.css" media="print" onload="this.media='all'"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fancyapps/ui/dist/fancybox/fancybox.min.css" media="print" onload="this.media='all'"><script>const GLOBAL_CONFIG = {
+  root: '/',
+  algolia: {"appId":"XO8L315K7G","apiKey":"2cd73df6ec19fdd7f3b0cab2fd056b89","indexName":"blog","hits":{"per_page":10},"languages":{"input_placeholder":"搜索文章","hits_empty":"找不到您查询的内容：${query}","hits_stats":"找到 ${hits} 条结果，用时 ${time} 毫秒"}},
+  localSearch: undefined,
+  translate: undefined,
+  noticeOutdate: undefined,
+  highlight: {"plugin":"highlighjs","highlightCopy":true,"highlightLang":true,"highlightHeightLimit":false},
+  copy: {
+    success: '复制成功',
+    error: '复制错误',
+    noSupport: '浏览器不支持'
+  },
+  relativeDate: {
+    homepage: false,
+    post: false
+  },
+  runtime: '',
+  dateSuffix: {
+    just: '刚刚',
+    min: '分钟前',
+    hour: '小时前',
+    day: '天前',
+    month: '个月前'
+  },
+  copyright: undefined,
+  lightbox: 'fancybox',
+  Snackbar: undefined,
+  source: {
+    justifiedGallery: {
+      js: 'https://cdn.jsdelivr.net/npm/flickr-justified-gallery/dist/fjGallery.min.js',
+      css: 'https://cdn.jsdelivr.net/npm/flickr-justified-gallery/dist/fjGallery.min.css'
+    }
+  },
+  isPhotoFigcaption: false,
+  islazyload: false,
+  isAnchor: false,
+  percent: {
+    toc: true  //是否显示滚动进度百分比,
+    rightside: false,
+  },
+  autoDarkmode: false
+}</script><script id="config-diff">var GLOBAL_CONFIG_SITE = {
+  title: 'SSM踩坑笔记 -（在更中）',
+  isPost: true,
+  isHome: false,
+  isHighlightShrink: false,
+  isToc: true,
+  postUpdate: '2024-04-21 16:46:17'
+}</script><noscript><style type="text/css">
+  #nav {
+    opacity: 1
+  }
+  .justified-gallery img {
+    opacity: 1
+  }
+
+  #recent-posts time,
+  #post-meta time {
+    display: inline !important
+  }
+</style></noscript><script>(win=>{
+    win.saveToLocal = {
+      set: function setWithExpiry(key, value, ttl) {
+        if (ttl === 0) return
+        const now = new Date()
+        const expiryDay = ttl * 86400000
+        const item = {
+          value: value,
+          expiry: now.getTime() + expiryDay,
+        }
+        localStorage.setItem(key, JSON.stringify(item))
+      },
+
+      get: function getWithExpiry(key) {
+        const itemStr = localStorage.getItem(key)
+
+        if (!itemStr) {
+          return undefined
+        }
+        const item = JSON.parse(itemStr)
+        const now = new Date()
+
+        if (now.getTime() > item.expiry) {
+          localStorage.removeItem(key)
+          return undefined
+        }
+        return item.value
+      }
+    }
+  
+    win.getScript = url => new Promise((resolve, reject) => {
+      const script = document.createElement('script')
+      script.src = url
+      script.async = true
+      script.onerror = reject
+      script.onload = script.onreadystatechange = function() {
+        const loadState = this.readyState
+        if (loadState && loadState !== 'loaded' && loadState !== 'complete') return
+        script.onload = script.onreadystatechange = null
+        resolve()
+      }
+      document.head.appendChild(script)
+    })
+  
+    win.getCSS = (url,id = false) => new Promise((resolve, reject) => {
+      const link = document.createElement('link')
+      link.rel = 'stylesheet'
+      link.href = url
+      if (id) link.id = id
+      link.onerror = reject
+      link.onload = link.onreadystatechange = function() {
+        const loadState = this.readyState
+        if (loadState && loadState !== 'loaded' && loadState !== 'complete') return
+        link.onload = link.onreadystatechange = null
+        resolve()
+      }
+      document.head.appendChild(link)
+    })
+  
+      win.activateDarkMode = function () {
+        document.documentElement.setAttribute('data-theme', 'dark')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#0d0d0d')
+        }
+      }
+      win.activateLightMode = function () {
+        document.documentElement.setAttribute('data-theme', 'light')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#ffffff')
+        }
+      }
+      const t = saveToLocal.get('theme')
+    
+          if (t === 'dark') activateDarkMode()
+          else if (t === 'light') activateLightMode()
+        
+      const asideStatus = saveToLocal.get('aside-status')
+      if (asideStatus !== undefined) {
+        if (asideStatus === 'hide') {
+          document.documentElement.classList.add('hide-aside')
+        } else {
+          document.documentElement.classList.remove('hide-aside')
+        }
+      }
+    
+    const detectApple = () => {
+      if(/iPad|iPhone|iPod|Macintosh/.test(navigator.userAgent)){
+        document.documentElement.classList.add('apple')
+      }
+    }
+    detectApple()
+    })(window)</script><link rel="stylesheet" href="/css/custom.css"><meta name="generator" content="Hexo 6.3.0"></head><body><div id="sidebar"><div id="menu-mask"></div><div id="sidebar-menus"><div class="avatar-img is-center"><img src="/img/a.jpg" onerror="onerror=null;src='/img/friend_404.gif'" alt="avatar"/></div><div class="sidebar-site-data site-data is-center"><a href="/archives/"><div class="headline">文章</div><div class="length-num">13</div></a><a href="/tags/"><div class="headline">标签</div><div class="length-num">20</div></a><a href="/categories/"><div class="headline">分类</div><div class="length-num">0</div></a></div><hr class="custom-hr"/><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> 主页</span></a></div><div class="menus_item"><a class="site-page group" href="javascript:void(0);"><i class="fa-fw fa fa-graduation-cap"></i><span> 博文</span><i class="fas fa-chevron-down"></i></a><ul class="menus_item_child"><li><a class="site-page child" href="/categories/"><i class="fa-fw fa fa-archive"></i><span> 分类</span></a></li><li><a class="site-page child" href="/tags/"><i class="fa-fw fa fa-tags"></i><span> 标签</span></a></li><li><a class="site-page child" href="/archives/"><i class="fa-fw fa fa-folder-open"></i><span> 归档</span></a></li></ul></div><div class="menus_item"><a class="site-page" href="/link/"><i class="fa-fw fa fa-link"></i><span> 友链</span></a></div><div class="menus_item"><a class="site-page" href="/about/"><i class="fa-fw fas fa-heart"></i><span> 关于笔者</span></a></div></div></div></div><div class="post" id="body-wrap"><header class="post-bg" id="page-header" style="background-image: url('/img/default_page.jpg')"><nav id="nav"><span id="blog-info"><a href="/" title="Yue C.H. Site"><span class="site-name">Yue C.H. Site</span></a></span><div id="menus"><div id="search-button"><a class="site-page social-icon search" href="javascript:void(0);"><i class="fas fa-search fa-fw"></i><span> 搜索</span></a></div><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> 主页</span></a></div><div class="menus_item"><a class="site-page group" href="javascript:void(0);"><i class="fa-fw fa fa-graduation-cap"></i><span> 博文</span><i class="fas fa-chevron-down"></i></a><ul class="menus_item_child"><li><a class="site-page child" href="/categories/"><i class="fa-fw fa fa-archive"></i><span> 分类</span></a></li><li><a class="site-page child" href="/tags/"><i class="fa-fw fa fa-tags"></i><span> 标签</span></a></li><li><a class="site-page child" href="/archives/"><i class="fa-fw fa fa-folder-open"></i><span> 归档</span></a></li></ul></div><div class="menus_item"><a class="site-page" href="/link/"><i class="fa-fw fa fa-link"></i><span> 友链</span></a></div><div class="menus_item"><a class="site-page" href="/about/"><i class="fa-fw fas fa-heart"></i><span> 关于笔者</span></a></div></div><div id="toggle-menu"><a class="site-page" href="javascript:void(0);"><i class="fas fa-bars fa-fw"></i></a></div></div></nav><div id="post-info"><h1 class="post-title">SSM踩坑笔记 -（在更中）</h1><div id="post-meta"><div class="meta-firstline"><span class="post-meta-date"><i class="far fa-calendar-alt fa-fw post-meta-icon"></i><span class="post-meta-label">发表于</span><time class="post-meta-date-created" datetime="2024-04-19T10:14:21.000Z" title="发表于 2024-04-19 18:14:21">2024-04-19</time><span class="post-meta-separator">|</span><i class="fas fa-history fa-fw post-meta-icon"></i><span class="post-meta-label">更新于</span><time class="post-meta-date-updated" datetime="2024-04-21T08:46:17.043Z" title="更新于 2024-04-21 16:46:17">2024-04-21</time></span></div><div class="meta-secondline"><span class="post-meta-separator">|</span><span class="post-meta-pv-cv" id="" data-flag-title="SSM踩坑笔记 -（在更中）"><i class="far fa-eye fa-fw post-meta-icon"></i><span class="post-meta-label">阅读量:</span><span id="busuanzi_value_page_pv"><i class="fa-solid fa-spinner fa-spin"></i></span></span></div></div></div></header><main class="layout" id="content-inner"><div id="post"><article class="post-content" id="article-container"><h3 id="作用域">作用域</h3>
+<ul>
+<li><p>把
+控制层(controller)的处理好的数据传递给视图层，需要使用作用域：</p>
+<ol type="1">
+<li><p>JSP<br />
+(1). pageContext 由于主要使用在JSP页面内，因此不常用
+作用域：用来在同一个页面的的不同标签之间传递数据</p></li>
+<li><p>Servlet<br />
+(1). request<br />
+作用域：从发送请求开始，到做出响应结束，即使发生视图之间的跳转，request仍然存在，但当响应返回至浏览器后，request失效</p>
+<p>(2). session<br />
+作用域：同一个浏览器窗口，多个请求之间需要传递数据</p>
+<p>(3). application<br />
+作用域：全局的参数，从服务器启动到服务器关闭一直有效，适合所有用户共享的频繁使用的数据</p></li>
+</ol></li>
+</ul>
+<h3 id="jquery选择器">Jquery选择器</h3>
+<ul>
+<li>jquery事件选择函数的用法： 选择器.click(function(){ // 添加JS代码，
+});</li>
+</ul>
+<h3 id="cookie">Cookie</h3>
+<ul>
+<li>记住密码登一类需要持久化存储到broswer的操作：
+<ol type="1">
+<li><p>使用Java的后台代码，request获取cookie</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><code class="hljs java">cookie集合 = request.getCookies();<br>遍历 cookie集合 <span class="hljs-keyword">for</span>(Cookie c : cs)&#123;<br>    <span class="hljs-keyword">if</span>(c.getName().eqauls(<span class="hljs-string">&quot;loginAct&quot;</span>))<br>        <span class="hljs-type">String</span> <span class="hljs-variable">loginAct</span> <span class="hljs-operator">=</span> c.getValue();<br>    <span class="hljs-keyword">else</span> <span class="hljs-keyword">if</span>(c.getName().equals(<span class="hljs-string">&quot;loginPwd&quot;</span>))<br>        <span class="hljs-type">String</span> <span class="hljs-variable">loginPwd</span> <span class="hljs-operator">=</span> c.getValue();<br>    <br>&#125;<br></code></pre></td></tr></table></figure></li>
+<li><p>在前端视图中获取Cookie，使用EL表达式： ps:
+默认的EL表达式获取数据若不加作用域会依次变量四个作用域（非JSP下为三个作用域）
+直到找到该表达式的实体，或全部查找结束找不到实体
+${cookie.loginAct.value} 获取cookie中key = loginAct下的value值 ps2:
+对于前端页面使用paramContext获取request中参数，否则需要jsp进行request.get操作</p></li>
+</ol></li>
+</ul>
+<h3 id="重定向请求转发">重定向/请求转发</h3>
+<ul>
+<li><p>请求转发和重定向的区别： 请求转发是在服务器端执行的：
+用户一次的请求，服务器多次转发，最后再回当前服务器返回给用户，期间只有一个request，且最后的url不发生任何变化</p>
+<p>重定向是用户请求一个服务器，服务器做出临时相应，给予响应头，客户端根据临时响应头二次请求，最终的url发生变化，且中间为多个request，不是一个。</p>
+<p>什么时候转发/重定向：
+本质：若一个servlet处理完了就使用请求转发，若一个servlet未处理完则使用重定向
+使用标准：根据url是否需要变化判断使用请求转发还是重定向
+使用重定向的方法：</p>
+<p><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><code class="hljs java"><span class="hljs-number">1.</span> response.sendRedirct()<br><span class="hljs-number">2.</span> <span class="hljs-keyword">return</span> <span class="hljs-string">&quot;redirect:&quot;</span><br></code></pre></td></tr></table></figure></p></li>
+</ul>
+<h3 id="过滤器拦截器">过滤器/拦截器</h3>
+<ul>
+<li><p>登录验证：</p>
+<ol type="1">
+<li><p>过滤器</p>
+<ol type="a">
+<li>创建过滤器类并实现过滤器的相应接口</li>
+</ol>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><code class="hljs java"><span class="hljs-keyword">implements</span> <span class="hljs-title class_">Filter</span>&#123;<br>	-- init<br>	-- destroy<br>	-- doFilter<br>&#125;<br></code></pre></td></tr></table></figure>
+<p>并在doFilter函数内部进行请求的放行或进入过滤器链处理</p>
+<ol start="2" type="a">
+<li>配置过滤器：web.xml</li>
+</ol>
+<p><strong>缺点</strong>：</p>
+<ol type="1">
+<li>流程繁琐，有可能需要实现冗余接口</li>
+<li>只能在请求进入资源访问之前处理，无法实现多样化的拦截和过滤，功能单一</li>
+</ol>
+<p>​</p></li>
+<li><p>拦截器</p>
+<ul>
+<li>请求到达资源之前</li>
+<li>请求到达资源之后</li>
+<li>请求回到浏览器时</li>
+</ul>
+<p>使用方法</p>
+<ol type="a">
+<li>提供拦截器类</li>
+</ol>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><code class="hljs java"><span class="hljs-keyword">implements</span> <span class="hljs-title class_">HandlerInterceptor</span>&#123;<br>  	-- pre<br>    -- post<br>    -- after<br>&#125;<br></code></pre></td></tr></table></figure>
+<ol start="2" type="a">
+<li>配置拦截器：springmvc.xml</li>
+</ol>
+<p>配置拦截器类时，需要设计好：</p>
+<ol type="1">
+<li>需要拦截的路径</li>
+<li>需要放行的路径</li>
+<li>拦截器类的路径</li>
+</ol>
+<p>ex:</p>
+<figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><code class="hljs xml"><span class="hljs-tag">&lt;<span class="hljs-name">mvc:interceptors</span>&gt;</span><br>        <span class="hljs-tag">&lt;<span class="hljs-name">mvc:interceptor</span>&gt;</span><br>            <span class="hljs-tag">&lt;<span class="hljs-name">mvc:mapping</span> <span class="hljs-attr">path</span>=<span class="hljs-string">&quot;/settings/**&quot;</span>/&gt;</span><br>            <span class="hljs-comment">&lt;!--</span><br><span class="hljs-comment">                对于拦截器配置的拦截目录，若/settings/*:仅为拦截settings下的一层子目录</span><br><span class="hljs-comment">                                       /settings/**: 拦截settings下的任意层目录</span><br><span class="hljs-comment">                        --&gt;</span><br>            <span class="hljs-tag">&lt;<span class="hljs-name">mvc:mapping</span> <span class="hljs-attr">path</span>=<span class="hljs-string">&quot;/workbench/**&quot;</span>/&gt;</span><br>     				<span class="hljs-comment">&lt;!-- 放行路径 --&gt;</span>     <br>            <span class="hljs-tag">&lt;<span class="hljs-name">mvc:exclude-mapping</span> <span class="hljs-attr">path</span>=<span class="hljs-string">&quot;/settings/qx/user/toLogin.do&quot;</span>/&gt;</span><br>            <span class="hljs-tag">&lt;<span class="hljs-name">mvc:exclude-mapping</span> <span class="hljs-attr">path</span>=<span class="hljs-string">&quot;/settings/qx/user/login.do&quot;</span>/&gt;</span><br>          	<span class="hljs-comment">&lt;!-- 拦截器类的路径 --&gt;</span>   <br>            <span class="hljs-tag">&lt;<span class="hljs-name">bean</span> <span class="hljs-attr">class</span>=<span class="hljs-string">&quot;web.interceptor.LoginInterceptor&quot;</span>&gt;</span><span class="hljs-tag">&lt;/<span class="hljs-name">bean</span>&gt;</span><br>        <span class="hljs-tag">&lt;/<span class="hljs-name">mvc:interceptor</span>&gt;</span><br>    <span class="hljs-tag">&lt;/<span class="hljs-name">mvc:interceptors</span>&gt;</span><br></code></pre></td></tr></table></figure>
+<p>实际样例：</p>
+<p>​
+对于网站，长时间打开但是并不操作，后台session过期后，需要重新验证身份，核心技术
+session + interceptor</p></li>
+</ol></li>
+</ul>
+<h3 id="页面切割技术">页面切割技术</h3>
+<ul>
+<li><frameset>
+<p>和 <frame>：</p>
+<ul>
+<li><frameset>
+<p>: 用来切割页面.</p>
+<figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><code class="hljs xml"><span class="hljs-comment">&lt;!-- cols 按行切割  --&gt;</span><br><span class="hljs-tag">&lt;<span class="hljs-name">frameset</span> <span class="hljs-attr">cols</span>=<span class="hljs-string">&quot;20%,60%,20%&quot;</span>&gt;</span><br><br><span class="hljs-comment">&lt;!-- rows 按行切割  --&gt;</span><br><span class="hljs-tag">&lt;<span class="hljs-name">frameset</span> <span class="hljs-attr">rows</span>=<span class="hljs-string">&quot;20%,60%,20%&quot;</span>&gt;</span><br> <br></code></pre></td></tr></table></figure></li>
+<li><p><frame> 用来显示页面</p>
+<figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><code class="hljs xml"><span class="hljs-tag">&lt;<span class="hljs-name">frame</span> <span class="hljs-attr">src</span>=<span class="hljs-string">&quot;url&quot;</span>&gt;</span><br><span class="hljs-comment">&lt;!-- example --&gt;</span><br><span class="hljs-tag">&lt;<span class="hljs-name">frameset</span> <span class="hljs-attr">cols</span>=<span class="hljs-string">&quot;20%,60%,20%&quot;</span>&gt;</span><br>	<span class="hljs-tag">&lt;<span class="hljs-name">frame</span> <span class="hljs-attr">src</span>=<span class="hljs-string">&quot;url1&quot;</span> <span class="hljs-attr">name</span>=<span class="hljs-string">&quot;f1&quot;</span>&gt;</span><br>	<span class="hljs-tag">&lt;<span class="hljs-name">frame</span> <span class="hljs-attr">src</span>=<span class="hljs-string">&quot;url2&quot;</span> <span class="hljs-attr">name</span>=<span class="hljs-string">&quot;f2&quot;</span>&gt;</span><br>	<span class="hljs-tag">&lt;<span class="hljs-name">frame</span> <span class="hljs-attr">src</span>=<span class="hljs-string">&quot;url3&quot;</span> <span class="hljs-attr">name</span>=<span class="hljs-string">&quot;f3&quot;</span>&gt;</span><br><span class="hljs-tag">&lt;/<span class="hljs-name">frameset</span>&gt;</span><br><br><span class="hljs-tag">&lt;<span class="hljs-name">a</span> <span class="hljs-attr">href</span>=<span class="hljs-string">&quot;url&quot;</span> <span class="hljs-attr">target</span>=<span class="hljs-string">&quot;f3&quot;</span>&gt;</span>test_a<span class="hljs-tag">&lt;/<span class="hljs-name">a</span>&gt;</span> <span class="hljs-comment">&lt;!-- 在f3块打开改标签 --&gt;</span><br></code></pre></td></tr></table></figure></li>
+</ul>
+<p>**ps：当前页面开发时不使用该方法，原因：</p>
+<frameset>
+<p>和<frame>均为重量级标签，使用改标签底层牵涉的模块多，效率低**</p></li>
+<li><p>'</p>
+<div>
+<p><code>和</code><iframe>`</p>
+<ul>
+<li><code>&lt;div&gt;</code>：负责切割页面</li>
+<li><code>&lt;iframe&gt;</code>：用来显示网页</li>
+</ul></li>
+</ul>
+<h3 id="返回json对象">返回JSON对象</h3>
+<ul>
+<li>若需要返回JSON对象，则Controller返回值需要至少设置成Obeject类型，然后依靠插件将其转为JSON对象</li>
+<li>函数名前添加ResponseBody注解
+<ul>
+<li>对于Responsebody注解:
+<ol type="1">
+<li>通过MVC工具直接将返回的对象按照属性名称编码为JSON对象</li>
+<li>当使用该注解时，就不会走视图处理器，而是直接写入输出流，相当于response输出指定格式的对象</li>
+<li>一般使用ResponseBody是在异步Ajax请求下执行</li>
+</ol></li>
+</ul></li>
+</ul>
+<h3
+id="前端日历插件bootstrap-datetimepicker">前端日历插件：bootstrap-datetimepicker</h3>
+<p>​ 前端插件使用步骤：</p>
+<pre><code>    1. 引入开发包： （.js .css），下载开发包，拷贝到webapp目录下
+    1. 创建容器`&lt;div&gt;`
+    1. 当容器加载完成之后，对容器调用工具函数</code></pre>
+<figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><code class="hljs xml"><span class="hljs-tag">&lt;<span class="hljs-name">link</span> <span class="hljs-attr">href</span>=<span class="hljs-string">&quot;jquery/bootstrap_3.3.0/css/bootstrap.min.css&quot;</span> <span class="hljs-attr">type</span>=<span class="hljs-string">&quot;text/css&quot;</span> <span class="hljs-attr">rel</span>=<span class="hljs-string">&quot;stylesheet&quot;</span> /&gt;</span><br><span class="hljs-tag">&lt;<span class="hljs-name">link</span> <span class="hljs-attr">href</span>=<span class="hljs-string">&quot;jquery/bootstrap-datetimepicker-master/css/bootstrap-datetimepicker.min.css&quot;</span> <span class="hljs-attr">type</span>=<span class="hljs-string">&quot;text/css&quot;</span> <span class="hljs-attr">rel</span>=<span class="hljs-string">&quot;stylesheet&quot;</span> /&gt;</span><br><br><span class="hljs-tag">&lt;<span class="hljs-name">script</span> <span class="hljs-attr">type</span>=<span class="hljs-string">&quot;text/javascript&quot;</span> <span class="hljs-attr">src</span>=<span class="hljs-string">&quot;jquery/jquery-1.11.1-min.js&quot;</span>&gt;</span><span class="hljs-tag">&lt;/<span class="hljs-name">script</span>&gt;</span><br><span class="hljs-tag">&lt;<span class="hljs-name">script</span> <span class="hljs-attr">type</span>=<span class="hljs-string">&quot;text/javascript&quot;</span> <span class="hljs-attr">src</span>=<span class="hljs-string">&quot;jquery/bootstrap_3.3.0/js/bootstrap.min.js&quot;</span>&gt;</span><span class="hljs-tag">&lt;/<span class="hljs-name">script</span>&gt;</span><br><span class="hljs-tag">&lt;<span class="hljs-name">script</span> <span class="hljs-attr">type</span>=<span class="hljs-string">&quot;text/javascript&quot;</span> <span class="hljs-attr">src</span>=<span class="hljs-string">&quot;jquery/bootstrap-datetimepicker-master/js/bootstrap-datetimepicker.js&quot;</span>&gt;</span><span class="hljs-tag">&lt;/<span class="hljs-name">script</span>&gt;</span><br><span class="hljs-tag">&lt;<span class="hljs-name">script</span> <span class="hljs-attr">type</span>=<span class="hljs-string">&quot;text/javascript&quot;</span> <span class="hljs-attr">src</span>=<span class="hljs-string">&quot;jquery/bootstrap-datetimepicker-master/locale/bootstrap-datetimepicker.zh-CN.js&quot;</span>&gt;</span><span class="hljs-tag">&lt;/<span class="hljs-name">script</span>&gt;</span><br><br></code></pre></td></tr></table></figure>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><code class="hljs javascript">$(<span class="hljs-string">&quot;.myDate&quot;</span>).<span class="hljs-title function_">datetimepicker</span>(&#123; <span class="hljs-comment">//类选择器</span><br>			<span class="hljs-attr">language</span>:<span class="hljs-string">&#x27;zh-CN&#x27;</span>, <span class="hljs-comment">//语言</span><br>			<span class="hljs-attr">format</span>:<span class="hljs-string">&#x27;yyyy-mm-dd&#x27;</span>,<span class="hljs-comment">//日期的格式</span><br>			<span class="hljs-attr">minView</span>:<span class="hljs-string">&#x27;month&#x27;</span>, <span class="hljs-comment">//可以选择的最小视图</span><br>			<span class="hljs-attr">initialDate</span>:<span class="hljs-keyword">new</span> <span class="hljs-title class_">Date</span>(),<span class="hljs-comment">//初始化显示的日期</span><br>			<span class="hljs-attr">autoclose</span>:<span class="hljs-literal">true</span>,<span class="hljs-comment">//设置选择完日期或者时间之后，日否自动关闭日历</span><br>			<span class="hljs-attr">todayBtn</span>:<span class="hljs-literal">true</span>,<br>			<span class="hljs-attr">clearBtn</span>:<span class="hljs-literal">true</span><br>		&#125;);<br></code></pre></td></tr></table></figure>
+<h3 id="前端分页查询插件pagination">前端分页查询插件：pagination</h3>
+<ul>
+<li>Step
+<ol type="1">
+<li>引入开发包</li>
+<li>创建容器</li>
+<li>调用工具函数</li>
+</ol></li>
+</ul>
+<h3 id="js的对象遍历方式">JS的对象遍历方式</h3>
+<pre><code>- 对于JS作用域中的变量，使用JSTL进行遍历，进行EL进行遍历
+- 对于JS的局部变量进行遍历的话，使用JS函数代码+选择器进行遍历</code></pre>
+<h3
+id="慎用submit标签提交同步请求刷新浏览器">慎用submit标签提交【同步请求刷新浏览器】</h3>
+<ul>
+<li><p>submit是同步提交请求，每次提交表单会刷新页面，此时有可能会造成bug或重复提交表单情况</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><code class="hljs javascript"><span class="hljs-title function_">queryActivityByConditionForPage</span>();<br><br>$(<span class="hljs-string">&quot;#queryActivityBtn&quot;</span>).<span class="hljs-title function_">click</span>(<span class="hljs-keyword">function</span> (<span class="hljs-params"></span>)&#123;<br><span class="hljs-title function_">queryActivityByConditionForPage</span>();<br>&#125;);<br></code></pre></td></tr></table></figure>
+<p>以该js代码为例，第一个queryActivityByConditionForPage是页面刷新是自动挂载的函数，第二个是点击Btn时的事件，如果该Btn是使用的submmit方法进行的表单的提交，且需要页面返回Controller返回的JSON，此时用submmit就会出现重复提交表单的bug，在submmit后，Controller接受到请求返回正确的JSON，但是浏览器在submmit后会再次刷新，因此又触发了刷新的表单提交，造成重复提交表单的bug。</p></li>
+<li><p>解决方法：</p>
+<ol type="1">
+<li>多设置触发条件</li>
+<li>采用异步请求方法进行表单的提交</li>
+</ol></li>
+</ul>
+<h3 id="基于jquery给元素绑定事件">基于JQuery给元素绑定事件</h3>
+<ul>
+<li><p>在元素事件属性上直接绑定函数：</p>
+<figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs xml"><span class="hljs-tag">&lt;<span class="hljs-name">XXX</span> <span class="hljs-attr">on-XXXX</span>=<span class="hljs-string">&quot;func()&quot;</span>&gt;</span><br></code></pre></td></tr></table></figure></li>
+<li><p>使用JQuery对象选择器</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><code class="hljs js">选择器.<span class="hljs-title function_">xxxx</span>(<span class="hljs-keyword">function</span>(<span class="hljs-params"></span>)&#123;<br>  <span class="hljs-comment">// func body</span><br>&#125;);<br></code></pre></td></tr></table></figure></li>
+<li><p>使用JQuery的on函数：</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><code class="hljs js">父选择器.<span class="hljs-title function_">on</span>(事件类型,<span class="hljs-string">&quot;子选择器&quot;</span>,<span class="hljs-keyword">function</span>(<span class="hljs-params"></span>)&#123;<br>	<span class="hljs-comment">// func body	</span><br>&#125;)<br></code></pre></td></tr></table></figure></li>
+</ul>
+<h3 id="getpost-区别">GET/POST 区别</h3>
+<ul>
+<li>待定</li>
+</ul>
+<h3 id="ajax和controller传参对应">Ajax和Controller传参对应</h3>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><code class="hljs javascript"><span class="hljs-keyword">var</span> ids=<span class="hljs-string">&quot;&quot;</span>;<br>$.<span class="hljs-title function_">each</span>(chekkedIds,<span class="hljs-keyword">function</span> (<span class="hljs-params"></span>) &#123;<span class="hljs-comment">//id=xxxx&amp;id=xxx&amp;.....&amp;id=xxx&amp;</span><br>ids+=<span class="hljs-string">&quot;id=&quot;</span>+<span class="hljs-variable language_">this</span>.<span class="hljs-property">value</span>+<span class="hljs-string">&quot;&amp;&quot;</span>;<br>&#125;);<br><br><span class="hljs-comment">// post</span><br>$.<span class="hljs-title function_">ajax</span>(&#123;<br>  <span class="hljs-attr">url</span>:<span class="hljs-string">&#x27;workbench/activity/deleteActivityByIds.do&#x27;</span>,<br>  <span class="hljs-attr">data</span>:ids,<br>  <span class="hljs-attr">type</span>:<span class="hljs-string">&#x27;post&#x27;</span>,<br>  <span class="hljs-attr">dataType</span>:<span class="hljs-string">&#x27;json&#x27;</span><br></code></pre></td></tr></table></figure>
+<ul>
+<li>此时，后台controller相应的函数参数列表的参数名称应为 String []id
+不是[]ids!</li>
+<li>ids仅为在js页面下的形参，传输到后台服务器后，解析为id的数组</li>
+</ul>
+</article><div class="post-copyright"><div class="post-copyright__author"><span class="post-copyright-meta">文章作者: </span><span class="post-copyright-info"><a href="https://ychhh-1114.github.io">Yue C.H.</a></span></div><div class="post-copyright__type"><span class="post-copyright-meta">文章链接: </span><span class="post-copyright-info"><a href="https://ychhh-1114.github.io/2024/04/19/ssm_note/">https://ychhh-1114.github.io/2024/04/19/ssm_note/</a></span></div><div class="post-copyright__notice"><span class="post-copyright-meta">版权声明: </span><span class="post-copyright-info">本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" target="_blank">CC BY-NC-SA 4.0</a> 许可协议。转载请注明来自 <a href="https://ychhh-1114.github.io" target="_blank">Yue C.H. Site</a>！</span></div></div><div class="tag_share"><div class="post-meta__tag-list"><a class="post-meta__tags" href="/tags/Java/">Java</a><a class="post-meta__tags" href="/tags/Web/">Web</a><a class="post-meta__tags" href="/tags/SSM/">SSM</a></div><div class="post_share"><div class="social-share" data-image="/img/a.jpg" data-sites="facebook,twitter,wechat,weibo,qq"></div><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/butterfly-extsrc/sharejs/dist/css/share.min.css" media="print" onload="this.media='all'"><script src="https://cdn.jsdelivr.net/npm/butterfly-extsrc/sharejs/dist/js/social-share.min.js" defer></script></div></div><nav class="pagination-post" id="pagination"><div class="prev-post pull-left"><a href="/2024/05/06/SpringBoot%20Note/" title="SpringBoot Note"><div class="cover" style="background: var(--default-bg-color)"></div><div class="pagination-info"><div class="label">上一篇</div><div class="prev_info">SpringBoot Note</div></div></a></div><div class="next-post pull-right"><a href="/2023/09/19/SAC%20Algorithm/" title="SAC算法理解"><div class="cover" style="background: var(--default-bg-color)"></div><div class="pagination-info"><div class="label">下一篇</div><div class="next_info">SAC算法理解</div></div></a></div></nav><div class="relatedPosts"><div class="headline"><i class="fas fa-thumbs-up fa-fw"></i><span>相关推荐</span></div><div class="relatedPosts-list"><div><a href="/2022/10/21/javaSpring/" title="JavaSpring学习笔记_2022年版"><div class="cover" style="background: var(--default-bg-color)"></div><div class="content is-center"><div class="date"><i class="far fa-calendar-alt fa-fw"></i> 2022-10-21</div><div class="title">JavaSpring学习笔记_2022年版</div></div></a></div><div><a href="/2024/05/06/Redis%20Note/" title="Redis Note"><div class="cover" style="background: var(--default-bg-color)"></div><div class="content is-center"><div class="date"><i class="far fa-calendar-alt fa-fw"></i> 2024-05-06</div><div class="title">Redis Note</div></div></a></div><div><a href="/2024/05/06/Spring%E7%9B%B8%E5%85%B3%E6%B3%A8%E8%A7%A3/" title="Annotation Points"><div class="cover" style="background: var(--default-bg-color)"></div><div class="content is-center"><div class="date"><i class="far fa-calendar-alt fa-fw"></i> 2024-05-06</div><div class="title">Annotation Points</div></div></a></div><div><a href="/2022/03/23/java%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F/" title="Java设计模式学习笔记"><div class="cover" style="background: var(--default-bg-color)"></div><div class="content is-center"><div class="date"><i class="far fa-calendar-alt fa-fw"></i> 2022-03-23</div><div class="title">Java设计模式学习笔记</div></div></a></div><div><a href="/2022/03/15/%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84/" title="Java数据结构梳理"><div class="cover" style="background: var(--default-bg-color)"></div><div class="content is-center"><div class="date"><i class="far fa-calendar-alt fa-fw"></i> 2022-03-15</div><div class="title">Java数据结构梳理</div></div></a></div><div><a href="/2022/01/27/%E7%88%AC%E8%99%AB/" title="Python爬虫理论"><div class="cover" style="background: var(--default-bg-color)"></div><div class="content is-center"><div class="date"><i class="far fa-calendar-alt fa-fw"></i> 2022-01-27</div><div class="title">Python爬虫理论</div></div></a></div></div></div></div><div class="aside-content" id="aside-content"><div class="card-widget card-info"><div class="is-center"><div class="avatar-img"><img src="/img/a.jpg" onerror="this.onerror=null;this.src='/img/friend_404.gif'" alt="avatar"/></div><div class="author-info__name">Yue C.H.</div><div class="author-info__description">去光荣的失败</div></div><div class="card-info-data site-data is-center"><a href="/archives/"><div class="headline">文章</div><div class="length-num">13</div></a><a href="/tags/"><div class="headline">标签</div><div class="length-num">20</div></a><a href="/categories/"><div class="headline">分类</div><div class="length-num">0</div></a></div><a id="card-info-btn" target="_blank" rel="noopener" href="https://github.com/Ychhh-1114"><i class="fab fa-github"></i><span>Follow Me</span></a><div class="card-info-social-icons is-center"><a class="social-icon" href="https://github.com/Ychhh-1114" target="_blank" title="Github"><i class="fab fa-github"></i></a><a class="social-icon" href="mailto:1325650083@qq.com" target="_blank" title="Email"><i class="fas fa-envelope-open-text"></i></a></div></div><div class="sticky_layout"><div class="card-widget" id="card-toc"><div class="item-headline"><i class="fas fa-stream"></i><span>目录</span><span class="toc-percentage"></span></div><div class="toc-content is-expand"><ol class="toc"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%BD%9C%E7%94%A8%E5%9F%9F"><span class="toc-number">1.</span> <span class="toc-text">作用域</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#jquery%E9%80%89%E6%8B%A9%E5%99%A8"><span class="toc-number">2.</span> <span class="toc-text">Jquery选择器</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#cookie"><span class="toc-number">3.</span> <span class="toc-text">Cookie</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E9%87%8D%E5%AE%9A%E5%90%91%E8%AF%B7%E6%B1%82%E8%BD%AC%E5%8F%91"><span class="toc-number">4.</span> <span class="toc-text">重定向&#x2F;请求转发</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E8%BF%87%E6%BB%A4%E5%99%A8%E6%8B%A6%E6%88%AA%E5%99%A8"><span class="toc-number">5.</span> <span class="toc-text">过滤器&#x2F;拦截器</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E9%A1%B5%E9%9D%A2%E5%88%87%E5%89%B2%E6%8A%80%E6%9C%AF"><span class="toc-number">6.</span> <span class="toc-text">页面切割技术</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E8%BF%94%E5%9B%9Ejson%E5%AF%B9%E8%B1%A1"><span class="toc-number">7.</span> <span class="toc-text">返回JSON对象</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%89%8D%E7%AB%AF%E6%97%A5%E5%8E%86%E6%8F%92%E4%BB%B6bootstrap-datetimepicker"><span class="toc-number">8.</span> <span class="toc-text">前端日历插件：bootstrap-datetimepicker</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%89%8D%E7%AB%AF%E5%88%86%E9%A1%B5%E6%9F%A5%E8%AF%A2%E6%8F%92%E4%BB%B6pagination"><span class="toc-number">9.</span> <span class="toc-text">前端分页查询插件：pagination</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#js%E7%9A%84%E5%AF%B9%E8%B1%A1%E9%81%8D%E5%8E%86%E6%96%B9%E5%BC%8F"><span class="toc-number">10.</span> <span class="toc-text">JS的对象遍历方式</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%85%8E%E7%94%A8submit%E6%A0%87%E7%AD%BE%E6%8F%90%E4%BA%A4%E5%90%8C%E6%AD%A5%E8%AF%B7%E6%B1%82%E5%88%B7%E6%96%B0%E6%B5%8F%E8%A7%88%E5%99%A8"><span class="toc-number">11.</span> <span class="toc-text">慎用submit标签提交【同步请求刷新浏览器】</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%9F%BA%E4%BA%8Ejquery%E7%BB%99%E5%85%83%E7%B4%A0%E7%BB%91%E5%AE%9A%E4%BA%8B%E4%BB%B6"><span class="toc-number">12.</span> <span class="toc-text">基于JQuery给元素绑定事件</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#getpost-%E5%8C%BA%E5%88%AB"><span class="toc-number">13.</span> <span class="toc-text">GET&#x2F;POST 区别</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#ajax%E5%92%8Ccontroller%E4%BC%A0%E5%8F%82%E5%AF%B9%E5%BA%94"><span class="toc-number">14.</span> <span class="toc-text">Ajax和Controller传参对应</span></a></li></ol></div></div><div class="card-widget card-recent-post"><div class="item-headline"><i class="fas fa-history"></i><span>最新文章</span></div><div class="aside-list"><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2024/05/06/Mybatis%E9%80%86%E5%90%91%E5%B7%A5%E7%A8%8B/" title="Mybatis逆向工程">Mybatis逆向工程</a><time datetime="2024-05-06T12:53:11.000Z" title="发表于 2024-05-06 20:53:11">2024-05-06</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2024/05/06/Redis%20Note/" title="Redis Note">Redis Note</a><time datetime="2024-05-06T12:51:11.000Z" title="发表于 2024-05-06 20:51:11">2024-05-06</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2024/05/06/Spring%E7%9B%B8%E5%85%B3%E6%B3%A8%E8%A7%A3/" title="Annotation Points">Annotation Points</a><time datetime="2024-05-06T12:50:11.000Z" title="发表于 2024-05-06 20:50:11">2024-05-06</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2024/05/06/SpringBoot%20Note/" title="SpringBoot Note">SpringBoot Note</a><time datetime="2024-05-06T12:48:11.000Z" title="发表于 2024-05-06 20:48:11">2024-05-06</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2024/04/19/ssm_note/" title="SSM踩坑笔记 -（在更中）">SSM踩坑笔记 -（在更中）</a><time datetime="2024-04-19T10:14:21.000Z" title="发表于 2024-04-19 18:14:21">2024-04-19</time></div></div></div></div></div></div></main><footer id="footer"><div id="footer-wrap"><div class="copyright">&copy;2020 - 2024 By Yue C.H.</div><div class="framework-info"><span>框架 </span><a target="_blank" rel="noopener" href="https://hexo.io">Hexo</a><span class="footer-separator">|</span><span>主题 </span><a target="_blank" rel="noopener" href="https://github.com/jerryc127/hexo-theme-butterfly">Butterfly</a></div></div></footer></div><div id="rightside"><div id="rightside-config-hide"><button id="readmode" type="button" title="阅读模式"><i class="fas fa-book-open"></i></button><button id="darkmode" type="button" title="浅色和深色模式转换"><i class="fas fa-adjust"></i></button><button id="hide-aside-btn" type="button" title="单栏和双栏切换"><i class="fas fa-arrows-alt-h"></i></button></div><div id="rightside-config-show"><button id="rightside_config" type="button" title="设置"><i class="fas fa-cog fa-spin"></i></button><button class="close" id="mobile-toc-button" type="button" title="目录"><i class="fas fa-list-ul"></i></button><button id="go-up" type="button" title="回到顶部"><span class="scroll-percent"></span><i class="fas fa-arrow-up"></i></button></div></div><div><script src="/js/utils.js"></script><script src="/js/main.js"></script><script src="https://cdn.jsdelivr.net/npm/@fancyapps/ui/dist/fancybox/fancybox.umd.min.js"></script><div class="js-pjax"><script>if (!window.MathJax) {
+  window.MathJax = {
+    tex: {
+      inlineMath: [['$', '$'], ['\\(', '\\)']],
+      tags: 'ams'
+    },
+    chtml: {
+      scale: 1.1
+    },
+    options: {
+      renderActions: {
+        findScript: [10, doc => {
+          for (const node of document.querySelectorAll('script[type^="math/tex"]')) {
+            const display = !!node.type.match(/; *mode=display/)
+            const math = new doc.options.MathItem(node.textContent, doc.inputJax[0], display)
+            const text = document.createTextNode('')
+            node.parentNode.replaceChild(text, node)
+            math.start = {node: text, delim: '', n: 0}
+            math.end = {node: text, delim: '', n: 0}
+            doc.math.push(math)
+          }
+        }, '']
+      }
+    }
+  }
+  
+  const script = document.createElement('script')
+  script.src = 'https://cdn.jsdelivr.net/npm/mathjax/es5/tex-mml-chtml.min.js'
+  script.id = 'MathJax-script'
+  script.async = true
+  document.head.appendChild(script)
+} else {
+  MathJax.startup.document.state(0)
+  MathJax.texReset()
+  MathJax.typesetPromise()
+}</script></div><script async data-pjax src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script><div id="algolia-search"><div class="search-dialog"><nav class="search-nav"><span class="search-dialog-title">搜索</span><button class="search-close-button"><i class="fas fa-times"></i></button></nav><div class="search-wrap"><div id="algolia-search-input"></div><hr/><div id="algolia-search-results"><div id="algolia-hits"></div><div id="algolia-pagination"></div><div id="algolia-info"><div class="algolia-stats"></div><div class="algolia-poweredBy"></div></div></div></div></div><div id="search-mask"></div><script src="https://cdn.jsdelivr.net/npm/algoliasearch/dist/algoliasearch-lite.umd.min.js"></script><script src="https://cdn.jsdelivr.net/npm/instantsearch.js/dist/instantsearch.production.min.js"></script><script src="/js/search/algolia.js"></script></div></div></body></html>

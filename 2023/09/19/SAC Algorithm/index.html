@@ -1,0 +1,321 @@
+<!DOCTYPE html><html lang="zh-CN" data-theme="light"><head><meta charset="UTF-8"><meta http-equiv="X-UA-Compatible" content="IE=edge"><meta name="viewport" content="width=device-width, initial-scale=1.0,viewport-fit=cover"><title>SAC算法理解 | Yue C.H. Site</title><meta name="author" content="Yue C.H."><meta name="copyright" content="Yue C.H."><meta name="format-detection" content="telephone=no"><meta name="theme-color" content="#ffffff"><meta name="description" content="SAC Algorithm  B站SAC原论文讲解链接：  https:&#x2F;&#x2F;www.bilibili.com&#x2F;video&#x2F;BV1YK4y1T7b6&#x2F;?spm_id_from&#x3D;333.788&amp;vd_source&#x3D;54a0edf8490a6a72a5e82c4e543fc3e2 https:&#x2F;&#x2F;www.bilibili.com&#x2F;video&#x2F;BV13V411e7Qb&#x2F;?spm_id_from&#x3D;3">
+<meta property="og:type" content="article">
+<meta property="og:title" content="SAC算法理解">
+<meta property="og:url" content="https://ychhh-1114.github.io/2023/09/19/SAC%20Algorithm/index.html">
+<meta property="og:site_name" content="Yue C.H. Site">
+<meta property="og:description" content="SAC Algorithm  B站SAC原论文讲解链接：  https:&#x2F;&#x2F;www.bilibili.com&#x2F;video&#x2F;BV1YK4y1T7b6&#x2F;?spm_id_from&#x3D;333.788&amp;vd_source&#x3D;54a0edf8490a6a72a5e82c4e543fc3e2 https:&#x2F;&#x2F;www.bilibili.com&#x2F;video&#x2F;BV13V411e7Qb&#x2F;?spm_id_from&#x3D;3">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://ychhh-1114.github.io/img/a.jpg">
+<meta property="article:published_time" content="2023-09-19T04:14:11.000Z">
+<meta property="article:modified_time" content="2023-10-08T14:28:17.302Z">
+<meta property="article:author" content="Yue C.H.">
+<meta property="article:tag" content="RL">
+<meta property="article:tag" content="DL">
+<meta property="article:tag" content="ML">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://ychhh-1114.github.io/img/a.jpg"><link rel="shortcut icon" href="/img/icon.ico"><link rel="canonical" href="https://ychhh-1114.github.io/2023/09/19/SAC%20Algorithm/index.html"><link rel="preconnect" href="//cdn.jsdelivr.net"/><link rel="preconnect" href="//busuanzi.ibruce.info"/><link rel="stylesheet" href="/css/index.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free/css/all.min.css" media="print" onload="this.media='all'"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fancyapps/ui/dist/fancybox/fancybox.min.css" media="print" onload="this.media='all'"><script>const GLOBAL_CONFIG = {
+  root: '/',
+  algolia: {"appId":"XO8L315K7G","apiKey":"2cd73df6ec19fdd7f3b0cab2fd056b89","indexName":"blog","hits":{"per_page":10},"languages":{"input_placeholder":"搜索文章","hits_empty":"找不到您查询的内容：${query}","hits_stats":"找到 ${hits} 条结果，用时 ${time} 毫秒"}},
+  localSearch: undefined,
+  translate: undefined,
+  noticeOutdate: undefined,
+  highlight: {"plugin":"highlighjs","highlightCopy":true,"highlightLang":true,"highlightHeightLimit":false},
+  copy: {
+    success: '复制成功',
+    error: '复制错误',
+    noSupport: '浏览器不支持'
+  },
+  relativeDate: {
+    homepage: false,
+    post: false
+  },
+  runtime: '',
+  dateSuffix: {
+    just: '刚刚',
+    min: '分钟前',
+    hour: '小时前',
+    day: '天前',
+    month: '个月前'
+  },
+  copyright: undefined,
+  lightbox: 'fancybox',
+  Snackbar: undefined,
+  source: {
+    justifiedGallery: {
+      js: 'https://cdn.jsdelivr.net/npm/flickr-justified-gallery/dist/fjGallery.min.js',
+      css: 'https://cdn.jsdelivr.net/npm/flickr-justified-gallery/dist/fjGallery.min.css'
+    }
+  },
+  isPhotoFigcaption: false,
+  islazyload: false,
+  isAnchor: false,
+  percent: {
+    toc: true  //是否显示滚动进度百分比,
+    rightside: false,
+  },
+  autoDarkmode: false
+}</script><script id="config-diff">var GLOBAL_CONFIG_SITE = {
+  title: 'SAC算法理解',
+  isPost: true,
+  isHome: false,
+  isHighlightShrink: false,
+  isToc: true,
+  postUpdate: '2023-10-08 22:28:17'
+}</script><noscript><style type="text/css">
+  #nav {
+    opacity: 1
+  }
+  .justified-gallery img {
+    opacity: 1
+  }
+
+  #recent-posts time,
+  #post-meta time {
+    display: inline !important
+  }
+</style></noscript><script>(win=>{
+    win.saveToLocal = {
+      set: function setWithExpiry(key, value, ttl) {
+        if (ttl === 0) return
+        const now = new Date()
+        const expiryDay = ttl * 86400000
+        const item = {
+          value: value,
+          expiry: now.getTime() + expiryDay,
+        }
+        localStorage.setItem(key, JSON.stringify(item))
+      },
+
+      get: function getWithExpiry(key) {
+        const itemStr = localStorage.getItem(key)
+
+        if (!itemStr) {
+          return undefined
+        }
+        const item = JSON.parse(itemStr)
+        const now = new Date()
+
+        if (now.getTime() > item.expiry) {
+          localStorage.removeItem(key)
+          return undefined
+        }
+        return item.value
+      }
+    }
+  
+    win.getScript = url => new Promise((resolve, reject) => {
+      const script = document.createElement('script')
+      script.src = url
+      script.async = true
+      script.onerror = reject
+      script.onload = script.onreadystatechange = function() {
+        const loadState = this.readyState
+        if (loadState && loadState !== 'loaded' && loadState !== 'complete') return
+        script.onload = script.onreadystatechange = null
+        resolve()
+      }
+      document.head.appendChild(script)
+    })
+  
+    win.getCSS = (url,id = false) => new Promise((resolve, reject) => {
+      const link = document.createElement('link')
+      link.rel = 'stylesheet'
+      link.href = url
+      if (id) link.id = id
+      link.onerror = reject
+      link.onload = link.onreadystatechange = function() {
+        const loadState = this.readyState
+        if (loadState && loadState !== 'loaded' && loadState !== 'complete') return
+        link.onload = link.onreadystatechange = null
+        resolve()
+      }
+      document.head.appendChild(link)
+    })
+  
+      win.activateDarkMode = function () {
+        document.documentElement.setAttribute('data-theme', 'dark')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#0d0d0d')
+        }
+      }
+      win.activateLightMode = function () {
+        document.documentElement.setAttribute('data-theme', 'light')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#ffffff')
+        }
+      }
+      const t = saveToLocal.get('theme')
+    
+          if (t === 'dark') activateDarkMode()
+          else if (t === 'light') activateLightMode()
+        
+      const asideStatus = saveToLocal.get('aside-status')
+      if (asideStatus !== undefined) {
+        if (asideStatus === 'hide') {
+          document.documentElement.classList.add('hide-aside')
+        } else {
+          document.documentElement.classList.remove('hide-aside')
+        }
+      }
+    
+    const detectApple = () => {
+      if(/iPad|iPhone|iPod|Macintosh/.test(navigator.userAgent)){
+        document.documentElement.classList.add('apple')
+      }
+    }
+    detectApple()
+    })(window)</script><link rel="stylesheet" href="/css/custom.css"><meta name="generator" content="Hexo 6.3.0"></head><body><div id="sidebar"><div id="menu-mask"></div><div id="sidebar-menus"><div class="avatar-img is-center"><img src="/img/a.jpg" onerror="onerror=null;src='/img/friend_404.gif'" alt="avatar"/></div><div class="sidebar-site-data site-data is-center"><a href="/archives/"><div class="headline">文章</div><div class="length-num">13</div></a><a href="/tags/"><div class="headline">标签</div><div class="length-num">20</div></a><a href="/categories/"><div class="headline">分类</div><div class="length-num">0</div></a></div><hr class="custom-hr"/><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> 主页</span></a></div><div class="menus_item"><a class="site-page group" href="javascript:void(0);"><i class="fa-fw fa fa-graduation-cap"></i><span> 博文</span><i class="fas fa-chevron-down"></i></a><ul class="menus_item_child"><li><a class="site-page child" href="/categories/"><i class="fa-fw fa fa-archive"></i><span> 分类</span></a></li><li><a class="site-page child" href="/tags/"><i class="fa-fw fa fa-tags"></i><span> 标签</span></a></li><li><a class="site-page child" href="/archives/"><i class="fa-fw fa fa-folder-open"></i><span> 归档</span></a></li></ul></div><div class="menus_item"><a class="site-page" href="/link/"><i class="fa-fw fa fa-link"></i><span> 友链</span></a></div><div class="menus_item"><a class="site-page" href="/about/"><i class="fa-fw fas fa-heart"></i><span> 关于笔者</span></a></div></div></div></div><div class="post" id="body-wrap"><header class="post-bg" id="page-header" style="background-image: url('/img/default_page.jpg')"><nav id="nav"><span id="blog-info"><a href="/" title="Yue C.H. Site"><span class="site-name">Yue C.H. Site</span></a></span><div id="menus"><div id="search-button"><a class="site-page social-icon search" href="javascript:void(0);"><i class="fas fa-search fa-fw"></i><span> 搜索</span></a></div><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> 主页</span></a></div><div class="menus_item"><a class="site-page group" href="javascript:void(0);"><i class="fa-fw fa fa-graduation-cap"></i><span> 博文</span><i class="fas fa-chevron-down"></i></a><ul class="menus_item_child"><li><a class="site-page child" href="/categories/"><i class="fa-fw fa fa-archive"></i><span> 分类</span></a></li><li><a class="site-page child" href="/tags/"><i class="fa-fw fa fa-tags"></i><span> 标签</span></a></li><li><a class="site-page child" href="/archives/"><i class="fa-fw fa fa-folder-open"></i><span> 归档</span></a></li></ul></div><div class="menus_item"><a class="site-page" href="/link/"><i class="fa-fw fa fa-link"></i><span> 友链</span></a></div><div class="menus_item"><a class="site-page" href="/about/"><i class="fa-fw fas fa-heart"></i><span> 关于笔者</span></a></div></div><div id="toggle-menu"><a class="site-page" href="javascript:void(0);"><i class="fas fa-bars fa-fw"></i></a></div></div></nav><div id="post-info"><h1 class="post-title">SAC算法理解</h1><div id="post-meta"><div class="meta-firstline"><span class="post-meta-date"><i class="far fa-calendar-alt fa-fw post-meta-icon"></i><span class="post-meta-label">发表于</span><time class="post-meta-date-created" datetime="2023-09-19T04:14:11.000Z" title="发表于 2023-09-19 12:14:11">2023-09-19</time><span class="post-meta-separator">|</span><i class="fas fa-history fa-fw post-meta-icon"></i><span class="post-meta-label">更新于</span><time class="post-meta-date-updated" datetime="2023-10-08T14:28:17.302Z" title="更新于 2023-10-08 22:28:17">2023-10-08</time></span></div><div class="meta-secondline"><span class="post-meta-separator">|</span><span class="post-meta-pv-cv" id="" data-flag-title="SAC算法理解"><i class="far fa-eye fa-fw post-meta-icon"></i><span class="post-meta-label">阅读量:</span><span id="busuanzi_value_page_pv"><i class="fa-solid fa-spinner fa-spin"></i></span></span></div></div></div></header><main class="layout" id="content-inner"><div id="post"><article class="post-content" id="article-container"><h1 id="sac-algorithm">SAC Algorithm</h1>
+<blockquote>
+<p>B站SAC原论文讲解链接：</p>
+<ul>
+<li>https://www.bilibili.com/video/BV1YK4y1T7b6/?spm_id_from=333.788&amp;vd_source=54a0edf8490a6a72a5e82c4e543fc3e2</li>
+<li>https://www.bilibili.com/video/BV13V411e7Qb/?spm_id_from=333.788&amp;vd_source=54a0edf8490a6a72a5e82c4e543fc3e2</li>
+</ul>
+<p>知乎链接：</p>
+<ul>
+<li>https://zhuanlan.zhihu.com/p/385658411</li>
+</ul>
+</blockquote>
+<h2 id="sac收敛性证明">SAC收敛性证明</h2>
+<p>首先解释KL散度<span class="math inline">\(D_{KL}\)</span></p>
+<blockquote>
+<p>KL散度是统计学中度量值，度量两个概率分布之间的差异大小，在信息论中又称为信息熵</p>
+</blockquote>
+<p>对于离散概率分布的KL散度计算为: <span class="math display">\[
+D_{KL}(P||Q) = \sum_{x∈X}P(x)ln(\frac{P(x)}{Q(x)})
+\]</span> 对于连续概率分布的KL散度计算为： $$ D_{KL}(P||Q) = <span
+class="math display">\[\begin{equation*}
+
+\int_{-\infty}^{+\infty} P(x)ln(\frac{P(x)}{Q(x)}) dx
+
+\end{equation*}\]</span> $$
+<strong>特别的，PQ之间的KL散度不等于QP之间的KL散度，即KL散度不具备对称性</strong></p>
+<p>在原有的π策略上增加熵和约束使得最小化策略π和Q值得出的分之间的KL散度：</p>
+<p><span class="math display">\[
+π_{new} = argmin D_{KL}(π^{’}||\frac{exp(Q_{old}(s_{t},·))}{Z_{old}})
+\]</span> prove I（<span
+class="math inline">\(π_{new}总是总是至少不坏于π_{old}\)</span>）： $$
+<span class="math display">\[\begin{equation*}
+\begin{aligned}
+D_{KL}(π&#39;(·|s_{t})||\frac{exp(Q^{π_{old}})}{Z^{π_{old}}}) &amp;=
+
+-\int_{}^{} π&#39;(a_{t}|s_{t})log(\frac{exp(Q^{π_{old}}(s_{t},a_{t}) -
+logZ^{π_{old}})}{π&#39;(a_{t}|s_{t})}) dx \\
+&amp;=
+
+-\int_{}^{}π&#39;(a_{t}|s_{t})(Q_{π_{old}}(s_{t},a_{t}) - logZ^{π_{old}}
+- logπ&#39;(a_{t}|s_{t}))\\
+
+&amp;=
+\int_{}^{}π&#39;(a_{t}|s_{t})(-Q_{π_{old}}(s_{t},a_{t}) + logZ^{π_{old}}
++ logπ&#39;(a_{t}|s_{t}))\\
+
+&amp;= E_{a_{t}\simπ&#39;}[logZ^{π_{old}} +
+logπ&#39;(a_{t}|s_{t})-Q_{π_{old}}(s_{t},a_{t})]
+
+
+\end{aligned}
+\end{equation*}\]</span> <span class="math display">\[
+得：
+\]</span> E_{a_{t}<em>{new}}[Q^{π_{old}}(s_{t},a_{t}) -
+logπ_{new}(a_{t},s_{t})] V^{π</em>{old}}(s_{t}) <span
+class="math display">\[
+带入贝尔曼方差易得
+\]</span> Q_{new} Q_{old} $$
+<strong>即按照上述策略π进行迭代，新的Q值总是不低于旧的Q值</strong></p>
+<h2 id="目标函数">目标函数</h2>
+<p><strong>state value function <span
+class="math inline">\(V_{φ}(s_{t})\)</span></strong></p>
+<p><strong>soft Q-function <span
+class="math inline">\(Q_{θ}(s_{t},a_{t})\)</span></strong></p>
+<p><strong>tractable policy <span
+class="math inline">\(π_{Φ}(a_{t}|s_{t})\)</span></strong></p>
+<p><strong>update流程</strong></p>
+<ol type="1">
+<li><p>对于state value网络参数的优化</p>
+<p>采用MSE优化目标函数： <span class="math display">\[
+J_{V}(φ) = E[\frac{1}{2}(V_{φ}(s_{t}) - E[Q_{θ}(s_{t},a_{t}) -
+logπ_{Φ}(a_{t}|s_{t})])^{2}]
+\]</span></p></li>
+<li><p>对于soft Q-function的网络参数优化</p>
+<p>采用MSE进行优化目标函数： <span class="math display">\[
+J_{Q}(θ) = E[\frac{1}{2}(Q_{θ}(s_{t},a_{t}) -
+\hat{Q_{θ}}(s_{t},a_{t}))^{2}] \\
+\hat{Q}(s_{t},a_{t}) = r + γE[V_{φ}(s_{t+1})]
+\]</span></p></li>
+<li><p>对于策略网络的参数更新 <span class="math display">\[
+J_{π}(Φ) =
+E[D_{KL}(π_{Φ}(·|s_{t})||\frac{exp(Q_{θ}(s_{t},·))}{Z_{θ}(s_{t})})]
+\]</span></p>
+<p>通过KL散度的化简可以将目标的损失函数更新为 <span
+class="math display">\[
+J_{π}(Φ) = E[αlog(π_{Φ}(·|s_{t}) - Q_{θ}(s_{t},a_{t})]
+\]</span></p>
+<ol type="1">
+<li><p>若按照PG的方法进行梯度下降，则会面临算法只适用于或者在on-policy的场景，在off-policy的场景适用性不好，即使添加了重要性采样</p></li>
+<li><p>因此对于SAC的策略网络的更新方法，采用了增加中间变量的方法进行迭代，即
+<span class="math display">\[
+a = tanh(μ_{Φ} + εσ_{Φ}) \\
+σ \sim N(0,1)
+\]</span></p></li>
+</ol></li>
+</ol>
+<h2 id="sac-解释性">SAC 解释性</h2>
+<ul>
+<li><p>待补充</p></li>
+<li><p>alpha确定</p>
+<blockquote>
+<p>I can't answer on behalf of the authors, but it makes sense to me
+that they would choose a default value ∝dim()∝dim(�). If they instead
+chose it at some fixed (i.e. not dependent on action dimensionality)
+constant, then problems with larger action dimensionalities would have
+to spread the same budget of randomness over the different action
+dimensionalities. For very large action spaces this might result in
+effectively deterministic behaviour. By choosing ¯∝dim()�¯∝dim(�),
+they are making sure that if you double the action dimensionality then
+you also double the amount of "total" randomness allowed by the policy,
+where "total" randomness is differential entropy (if you are confused
+why they have chosen a negative constant of proportionality, remember
+that differential entropy can be negative, and that differential
+entropies add across dimensions for diagonal stochastic policies; I
+think it just happens to be the case that for most mujoco tasks, it's
+effective to have relatively low target entropies. This might not hold
+for non-mujoco tasks.)</p>
+</blockquote></li>
+</ul>
+</article><div class="post-copyright"><div class="post-copyright__author"><span class="post-copyright-meta">文章作者: </span><span class="post-copyright-info"><a href="https://ychhh-1114.github.io">Yue C.H.</a></span></div><div class="post-copyright__type"><span class="post-copyright-meta">文章链接: </span><span class="post-copyright-info"><a href="https://ychhh-1114.github.io/2023/09/19/SAC%20Algorithm/">https://ychhh-1114.github.io/2023/09/19/SAC%20Algorithm/</a></span></div><div class="post-copyright__notice"><span class="post-copyright-meta">版权声明: </span><span class="post-copyright-info">本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" target="_blank">CC BY-NC-SA 4.0</a> 许可协议。转载请注明来自 <a href="https://ychhh-1114.github.io" target="_blank">Yue C.H. Site</a>！</span></div></div><div class="tag_share"><div class="post-meta__tag-list"><a class="post-meta__tags" href="/tags/RL/">RL</a><a class="post-meta__tags" href="/tags/DL/">DL</a><a class="post-meta__tags" href="/tags/ML/">ML</a></div><div class="post_share"><div class="social-share" data-image="/img/a.jpg" data-sites="facebook,twitter,wechat,weibo,qq"></div><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/butterfly-extsrc/sharejs/dist/css/share.min.css" media="print" onload="this.media='all'"><script src="https://cdn.jsdelivr.net/npm/butterfly-extsrc/sharejs/dist/js/social-share.min.js" defer></script></div></div><nav class="pagination-post" id="pagination"><div class="prev-post pull-left"><a href="/2024/04/19/ssm_note/" title="SSM踩坑笔记 -（在更中）"><div class="cover" style="background: var(--default-bg-color)"></div><div class="pagination-info"><div class="label">上一篇</div><div class="prev_info">SSM踩坑笔记 -（在更中）</div></div></a></div><div class="next-post pull-right"><a href="/2023/09/05/%E7%9F%A5%E8%AF%86%E8%92%B8%E9%A6%8F/" title="知识蒸馏"><div class="cover" style="background: var(--default-bg-color)"></div><div class="pagination-info"><div class="label">下一篇</div><div class="next_info">知识蒸馏</div></div></a></div></nav><div class="relatedPosts"><div class="headline"><i class="fas fa-thumbs-up fa-fw"></i><span>相关推荐</span></div><div class="relatedPosts-list"><div><a href="/2023/08/10/AlphaStar/" title="AlphaStar算法梳理"><div class="cover" style="background: var(--default-bg-color)"></div><div class="content is-center"><div class="date"><i class="far fa-calendar-alt fa-fw"></i> 2023-08-10</div><div class="title">AlphaStar算法梳理</div></div></a></div><div><a href="/2023/09/05/%E7%9F%A5%E8%AF%86%E8%92%B8%E9%A6%8F/" title="知识蒸馏"><div class="cover" style="background: var(--default-bg-color)"></div><div class="content is-center"><div class="date"><i class="far fa-calendar-alt fa-fw"></i> 2023-09-05</div><div class="title">知识蒸馏</div></div></a></div></div></div></div><div class="aside-content" id="aside-content"><div class="card-widget card-info"><div class="is-center"><div class="avatar-img"><img src="/img/a.jpg" onerror="this.onerror=null;this.src='/img/friend_404.gif'" alt="avatar"/></div><div class="author-info__name">Yue C.H.</div><div class="author-info__description">去光荣的失败</div></div><div class="card-info-data site-data is-center"><a href="/archives/"><div class="headline">文章</div><div class="length-num">13</div></a><a href="/tags/"><div class="headline">标签</div><div class="length-num">20</div></a><a href="/categories/"><div class="headline">分类</div><div class="length-num">0</div></a></div><a id="card-info-btn" target="_blank" rel="noopener" href="https://github.com/Ychhh-1114"><i class="fab fa-github"></i><span>Follow Me</span></a><div class="card-info-social-icons is-center"><a class="social-icon" href="https://github.com/Ychhh-1114" target="_blank" title="Github"><i class="fab fa-github"></i></a><a class="social-icon" href="mailto:1325650083@qq.com" target="_blank" title="Email"><i class="fas fa-envelope-open-text"></i></a></div></div><div class="sticky_layout"><div class="card-widget" id="card-toc"><div class="item-headline"><i class="fas fa-stream"></i><span>目录</span><span class="toc-percentage"></span></div><div class="toc-content is-expand"><ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#sac-algorithm"><span class="toc-number">1.</span> <span class="toc-text">SAC Algorithm</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#sac%E6%94%B6%E6%95%9B%E6%80%A7%E8%AF%81%E6%98%8E"><span class="toc-number">1.1.</span> <span class="toc-text">SAC收敛性证明</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E7%9B%AE%E6%A0%87%E5%87%BD%E6%95%B0"><span class="toc-number">1.2.</span> <span class="toc-text">目标函数</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#sac-%E8%A7%A3%E9%87%8A%E6%80%A7"><span class="toc-number">1.3.</span> <span class="toc-text">SAC 解释性</span></a></li></ol></li></ol></div></div><div class="card-widget card-recent-post"><div class="item-headline"><i class="fas fa-history"></i><span>最新文章</span></div><div class="aside-list"><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2024/05/06/Mybatis%E9%80%86%E5%90%91%E5%B7%A5%E7%A8%8B/" title="Mybatis逆向工程">Mybatis逆向工程</a><time datetime="2024-05-06T12:53:11.000Z" title="发表于 2024-05-06 20:53:11">2024-05-06</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2024/05/06/Redis%20Note/" title="Redis Note">Redis Note</a><time datetime="2024-05-06T12:51:11.000Z" title="发表于 2024-05-06 20:51:11">2024-05-06</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2024/05/06/Spring%E7%9B%B8%E5%85%B3%E6%B3%A8%E8%A7%A3/" title="Annotation Points">Annotation Points</a><time datetime="2024-05-06T12:50:11.000Z" title="发表于 2024-05-06 20:50:11">2024-05-06</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2024/05/06/SpringBoot%20Note/" title="SpringBoot Note">SpringBoot Note</a><time datetime="2024-05-06T12:48:11.000Z" title="发表于 2024-05-06 20:48:11">2024-05-06</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2024/04/19/ssm_note/" title="SSM踩坑笔记 -（在更中）">SSM踩坑笔记 -（在更中）</a><time datetime="2024-04-19T10:14:21.000Z" title="发表于 2024-04-19 18:14:21">2024-04-19</time></div></div></div></div></div></div></main><footer id="footer"><div id="footer-wrap"><div class="copyright">&copy;2020 - 2024 By Yue C.H.</div><div class="framework-info"><span>框架 </span><a target="_blank" rel="noopener" href="https://hexo.io">Hexo</a><span class="footer-separator">|</span><span>主题 </span><a target="_blank" rel="noopener" href="https://github.com/jerryc127/hexo-theme-butterfly">Butterfly</a></div></div></footer></div><div id="rightside"><div id="rightside-config-hide"><button id="readmode" type="button" title="阅读模式"><i class="fas fa-book-open"></i></button><button id="darkmode" type="button" title="浅色和深色模式转换"><i class="fas fa-adjust"></i></button><button id="hide-aside-btn" type="button" title="单栏和双栏切换"><i class="fas fa-arrows-alt-h"></i></button></div><div id="rightside-config-show"><button id="rightside_config" type="button" title="设置"><i class="fas fa-cog fa-spin"></i></button><button class="close" id="mobile-toc-button" type="button" title="目录"><i class="fas fa-list-ul"></i></button><button id="go-up" type="button" title="回到顶部"><span class="scroll-percent"></span><i class="fas fa-arrow-up"></i></button></div></div><div><script src="/js/utils.js"></script><script src="/js/main.js"></script><script src="https://cdn.jsdelivr.net/npm/@fancyapps/ui/dist/fancybox/fancybox.umd.min.js"></script><div class="js-pjax"><script>if (!window.MathJax) {
+  window.MathJax = {
+    tex: {
+      inlineMath: [['$', '$'], ['\\(', '\\)']],
+      tags: 'ams'
+    },
+    chtml: {
+      scale: 1.1
+    },
+    options: {
+      renderActions: {
+        findScript: [10, doc => {
+          for (const node of document.querySelectorAll('script[type^="math/tex"]')) {
+            const display = !!node.type.match(/; *mode=display/)
+            const math = new doc.options.MathItem(node.textContent, doc.inputJax[0], display)
+            const text = document.createTextNode('')
+            node.parentNode.replaceChild(text, node)
+            math.start = {node: text, delim: '', n: 0}
+            math.end = {node: text, delim: '', n: 0}
+            doc.math.push(math)
+          }
+        }, '']
+      }
+    }
+  }
+  
+  const script = document.createElement('script')
+  script.src = 'https://cdn.jsdelivr.net/npm/mathjax/es5/tex-mml-chtml.min.js'
+  script.id = 'MathJax-script'
+  script.async = true
+  document.head.appendChild(script)
+} else {
+  MathJax.startup.document.state(0)
+  MathJax.texReset()
+  MathJax.typesetPromise()
+}</script></div><script async data-pjax src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script><div id="algolia-search"><div class="search-dialog"><nav class="search-nav"><span class="search-dialog-title">搜索</span><button class="search-close-button"><i class="fas fa-times"></i></button></nav><div class="search-wrap"><div id="algolia-search-input"></div><hr/><div id="algolia-search-results"><div id="algolia-hits"></div><div id="algolia-pagination"></div><div id="algolia-info"><div class="algolia-stats"></div><div class="algolia-poweredBy"></div></div></div></div></div><div id="search-mask"></div><script src="https://cdn.jsdelivr.net/npm/algoliasearch/dist/algoliasearch-lite.umd.min.js"></script><script src="https://cdn.jsdelivr.net/npm/instantsearch.js/dist/instantsearch.production.min.js"></script><script src="/js/search/algolia.js"></script></div></div></body></html>

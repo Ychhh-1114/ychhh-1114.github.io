@@ -1,0 +1,345 @@
+<!DOCTYPE html><html lang="zh-CN" data-theme="light"><head><meta charset="UTF-8"><meta http-equiv="X-UA-Compatible" content="IE=edge"><meta name="viewport" content="width=device-width, initial-scale=1.0,viewport-fit=cover"><title>AlphaStar算法梳理 | Yue C.H. Site</title><meta name="author" content="Yue C.H."><meta name="copyright" content="Yue C.H."><meta name="format-detection" content="telephone=no"><meta name="theme-color" content="#ffffff"><meta name="description" content="AlphaStar整理   对AlphaStar算法的解读：  https:&#x2F;&#x2F;zhuanlan.zhihu.com&#x2F;p&#x2F;92543229 https:&#x2F;&#x2F;zhuanlan.zhihu.com&#x2F;p&#x2F;97720096 https:&#x2F;&#x2F;zhuanlan.zhihu.com&#x2F;p&#x2F;89396146  原论文：https:&#x2F;&#x2F;sci-hub.se&#x2F;10.1038&#x2F;s41586-019-1724-z 论文解读">
+<meta property="og:type" content="article">
+<meta property="og:title" content="AlphaStar算法梳理">
+<meta property="og:url" content="https://ychhh-1114.github.io/2023/08/10/AlphaStar/index.html">
+<meta property="og:site_name" content="Yue C.H. Site">
+<meta property="og:description" content="AlphaStar整理   对AlphaStar算法的解读：  https:&#x2F;&#x2F;zhuanlan.zhihu.com&#x2F;p&#x2F;92543229 https:&#x2F;&#x2F;zhuanlan.zhihu.com&#x2F;p&#x2F;97720096 https:&#x2F;&#x2F;zhuanlan.zhihu.com&#x2F;p&#x2F;89396146  原论文：https:&#x2F;&#x2F;sci-hub.se&#x2F;10.1038&#x2F;s41586-019-1724-z 论文解读">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://ychhh-1114.github.io/img/a.jpg">
+<meta property="article:published_time" content="2023-08-10T12:29:11.000Z">
+<meta property="article:modified_time" content="2023-08-10T12:50:02.898Z">
+<meta property="article:author" content="Yue C.H.">
+<meta property="article:tag" content="RL">
+<meta property="article:tag" content="DL">
+<meta property="article:tag" content="ML">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://ychhh-1114.github.io/img/a.jpg"><link rel="shortcut icon" href="/img/icon.ico"><link rel="canonical" href="https://ychhh-1114.github.io/2023/08/10/AlphaStar/index.html"><link rel="preconnect" href="//cdn.jsdelivr.net"/><link rel="preconnect" href="//busuanzi.ibruce.info"/><link rel="stylesheet" href="/css/index.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free/css/all.min.css" media="print" onload="this.media='all'"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fancyapps/ui/dist/fancybox/fancybox.min.css" media="print" onload="this.media='all'"><script>const GLOBAL_CONFIG = {
+  root: '/',
+  algolia: {"appId":"XO8L315K7G","apiKey":"2cd73df6ec19fdd7f3b0cab2fd056b89","indexName":"blog","hits":{"per_page":10},"languages":{"input_placeholder":"搜索文章","hits_empty":"找不到您查询的内容：${query}","hits_stats":"找到 ${hits} 条结果，用时 ${time} 毫秒"}},
+  localSearch: undefined,
+  translate: undefined,
+  noticeOutdate: undefined,
+  highlight: {"plugin":"highlighjs","highlightCopy":true,"highlightLang":true,"highlightHeightLimit":false},
+  copy: {
+    success: '复制成功',
+    error: '复制错误',
+    noSupport: '浏览器不支持'
+  },
+  relativeDate: {
+    homepage: false,
+    post: false
+  },
+  runtime: '',
+  dateSuffix: {
+    just: '刚刚',
+    min: '分钟前',
+    hour: '小时前',
+    day: '天前',
+    month: '个月前'
+  },
+  copyright: undefined,
+  lightbox: 'fancybox',
+  Snackbar: undefined,
+  source: {
+    justifiedGallery: {
+      js: 'https://cdn.jsdelivr.net/npm/flickr-justified-gallery/dist/fjGallery.min.js',
+      css: 'https://cdn.jsdelivr.net/npm/flickr-justified-gallery/dist/fjGallery.min.css'
+    }
+  },
+  isPhotoFigcaption: false,
+  islazyload: false,
+  isAnchor: false,
+  percent: {
+    toc: true  //是否显示滚动进度百分比,
+    rightside: false,
+  },
+  autoDarkmode: false
+}</script><script id="config-diff">var GLOBAL_CONFIG_SITE = {
+  title: 'AlphaStar算法梳理',
+  isPost: true,
+  isHome: false,
+  isHighlightShrink: false,
+  isToc: true,
+  postUpdate: '2023-08-10 20:50:02'
+}</script><noscript><style type="text/css">
+  #nav {
+    opacity: 1
+  }
+  .justified-gallery img {
+    opacity: 1
+  }
+
+  #recent-posts time,
+  #post-meta time {
+    display: inline !important
+  }
+</style></noscript><script>(win=>{
+    win.saveToLocal = {
+      set: function setWithExpiry(key, value, ttl) {
+        if (ttl === 0) return
+        const now = new Date()
+        const expiryDay = ttl * 86400000
+        const item = {
+          value: value,
+          expiry: now.getTime() + expiryDay,
+        }
+        localStorage.setItem(key, JSON.stringify(item))
+      },
+
+      get: function getWithExpiry(key) {
+        const itemStr = localStorage.getItem(key)
+
+        if (!itemStr) {
+          return undefined
+        }
+        const item = JSON.parse(itemStr)
+        const now = new Date()
+
+        if (now.getTime() > item.expiry) {
+          localStorage.removeItem(key)
+          return undefined
+        }
+        return item.value
+      }
+    }
+  
+    win.getScript = url => new Promise((resolve, reject) => {
+      const script = document.createElement('script')
+      script.src = url
+      script.async = true
+      script.onerror = reject
+      script.onload = script.onreadystatechange = function() {
+        const loadState = this.readyState
+        if (loadState && loadState !== 'loaded' && loadState !== 'complete') return
+        script.onload = script.onreadystatechange = null
+        resolve()
+      }
+      document.head.appendChild(script)
+    })
+  
+    win.getCSS = (url,id = false) => new Promise((resolve, reject) => {
+      const link = document.createElement('link')
+      link.rel = 'stylesheet'
+      link.href = url
+      if (id) link.id = id
+      link.onerror = reject
+      link.onload = link.onreadystatechange = function() {
+        const loadState = this.readyState
+        if (loadState && loadState !== 'loaded' && loadState !== 'complete') return
+        link.onload = link.onreadystatechange = null
+        resolve()
+      }
+      document.head.appendChild(link)
+    })
+  
+      win.activateDarkMode = function () {
+        document.documentElement.setAttribute('data-theme', 'dark')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#0d0d0d')
+        }
+      }
+      win.activateLightMode = function () {
+        document.documentElement.setAttribute('data-theme', 'light')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#ffffff')
+        }
+      }
+      const t = saveToLocal.get('theme')
+    
+          if (t === 'dark') activateDarkMode()
+          else if (t === 'light') activateLightMode()
+        
+      const asideStatus = saveToLocal.get('aside-status')
+      if (asideStatus !== undefined) {
+        if (asideStatus === 'hide') {
+          document.documentElement.classList.add('hide-aside')
+        } else {
+          document.documentElement.classList.remove('hide-aside')
+        }
+      }
+    
+    const detectApple = () => {
+      if(/iPad|iPhone|iPod|Macintosh/.test(navigator.userAgent)){
+        document.documentElement.classList.add('apple')
+      }
+    }
+    detectApple()
+    })(window)</script><link rel="stylesheet" href="/css/custom.css"><meta name="generator" content="Hexo 6.3.0"></head><body><div id="sidebar"><div id="menu-mask"></div><div id="sidebar-menus"><div class="avatar-img is-center"><img src="/img/a.jpg" onerror="onerror=null;src='/img/friend_404.gif'" alt="avatar"/></div><div class="sidebar-site-data site-data is-center"><a href="/archives/"><div class="headline">文章</div><div class="length-num">13</div></a><a href="/tags/"><div class="headline">标签</div><div class="length-num">20</div></a><a href="/categories/"><div class="headline">分类</div><div class="length-num">0</div></a></div><hr class="custom-hr"/><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> 主页</span></a></div><div class="menus_item"><a class="site-page group" href="javascript:void(0);"><i class="fa-fw fa fa-graduation-cap"></i><span> 博文</span><i class="fas fa-chevron-down"></i></a><ul class="menus_item_child"><li><a class="site-page child" href="/categories/"><i class="fa-fw fa fa-archive"></i><span> 分类</span></a></li><li><a class="site-page child" href="/tags/"><i class="fa-fw fa fa-tags"></i><span> 标签</span></a></li><li><a class="site-page child" href="/archives/"><i class="fa-fw fa fa-folder-open"></i><span> 归档</span></a></li></ul></div><div class="menus_item"><a class="site-page" href="/link/"><i class="fa-fw fa fa-link"></i><span> 友链</span></a></div><div class="menus_item"><a class="site-page" href="/about/"><i class="fa-fw fas fa-heart"></i><span> 关于笔者</span></a></div></div></div></div><div class="post" id="body-wrap"><header class="post-bg" id="page-header" style="background-image: url('/img/default_page.jpg')"><nav id="nav"><span id="blog-info"><a href="/" title="Yue C.H. Site"><span class="site-name">Yue C.H. Site</span></a></span><div id="menus"><div id="search-button"><a class="site-page social-icon search" href="javascript:void(0);"><i class="fas fa-search fa-fw"></i><span> 搜索</span></a></div><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> 主页</span></a></div><div class="menus_item"><a class="site-page group" href="javascript:void(0);"><i class="fa-fw fa fa-graduation-cap"></i><span> 博文</span><i class="fas fa-chevron-down"></i></a><ul class="menus_item_child"><li><a class="site-page child" href="/categories/"><i class="fa-fw fa fa-archive"></i><span> 分类</span></a></li><li><a class="site-page child" href="/tags/"><i class="fa-fw fa fa-tags"></i><span> 标签</span></a></li><li><a class="site-page child" href="/archives/"><i class="fa-fw fa fa-folder-open"></i><span> 归档</span></a></li></ul></div><div class="menus_item"><a class="site-page" href="/link/"><i class="fa-fw fa fa-link"></i><span> 友链</span></a></div><div class="menus_item"><a class="site-page" href="/about/"><i class="fa-fw fas fa-heart"></i><span> 关于笔者</span></a></div></div><div id="toggle-menu"><a class="site-page" href="javascript:void(0);"><i class="fas fa-bars fa-fw"></i></a></div></div></nav><div id="post-info"><h1 class="post-title">AlphaStar算法梳理</h1><div id="post-meta"><div class="meta-firstline"><span class="post-meta-date"><i class="far fa-calendar-alt fa-fw post-meta-icon"></i><span class="post-meta-label">发表于</span><time class="post-meta-date-created" datetime="2023-08-10T12:29:11.000Z" title="发表于 2023-08-10 20:29:11">2023-08-10</time><span class="post-meta-separator">|</span><i class="fas fa-history fa-fw post-meta-icon"></i><span class="post-meta-label">更新于</span><time class="post-meta-date-updated" datetime="2023-08-10T12:50:02.898Z" title="更新于 2023-08-10 20:50:02">2023-08-10</time></span></div><div class="meta-secondline"><span class="post-meta-separator">|</span><span class="post-meta-pv-cv" id="" data-flag-title="AlphaStar算法梳理"><i class="far fa-eye fa-fw post-meta-icon"></i><span class="post-meta-label">阅读量:</span><span id="busuanzi_value_page_pv"><i class="fa-solid fa-spinner fa-spin"></i></span></span></div></div></div></header><main class="layout" id="content-inner"><div id="post"><article class="post-content" id="article-container"><h2 id="alphastar整理">AlphaStar整理</h2>
+<blockquote>
+<ul>
+<li>对AlphaStar算法的解读：
+<ol type="1">
+<li>https://zhuanlan.zhihu.com/p/92543229</li>
+<li>https://zhuanlan.zhihu.com/p/97720096</li>
+<li>https://zhuanlan.zhihu.com/p/89396146</li>
+</ol></li>
+<li>原论文：https://sci-hub.se/10.1038/s41586-019-1724-z</li>
+<li>论文解读视频：https://www.bilibili.com/video/BV1wa4y1e74G/?spm_id_from=333.337.search-card.all.click&amp;vd_source=54a0edf8490a6a72a5e82c4e543fc3e2</li>
+</ul>
+</blockquote>
+<h3 id="监督学习预训练过程">1. 监督学习（预训练过程）</h3>
+<p>​
+通过<strong>大量</strong>的<strong>高质量</strong>人类对局作为经验数据，进行学习，实现<strong>模仿学习的效果</strong>，即在一个状态下，让agent所作的策略去拟合游戏玩家的所作的策略，从而给网络一个较好的初始化参数。</p>
+<p>​ 监督学习做法：</p>
+<ol type="1">
+<li><p>对对局进行解码，获得observations。</p></li>
+<li><p>将observations送入网络，得到action的概率分布</p></li>
+<li><p>将agent的action概率分布与人类经验的action损失训练：</p>
+<ul>
+<li>若为分类任务即动作类型选择，则为crossentropy损失</li>
+<li>若为连续型数值拟合任务，则为mse</li>
+</ul></li>
+<li><p>在实际训练时，若agent此刻做出的action与人类经验不同，那么在真正执行action时，采取的仍然为人类经验的action，即在整个训练的过程中，不管agent输出什么动作，在执行时均为人类经验动作，agent的动作只做为损失值进行训练。</p></li>
+</ol>
+<h3 id="强化学习">2. 强化学习</h3>
+<p><img
+src="/img/alphastar%E6%95%B4%E7%90%86/image-20230809150147846.png" /></p>
+<p>对于强化学习算法，整体模型采用了Actor-Critic的架构.</p>
+<h4 id="策略网络训练">2.1 策略网络训练</h4>
+<ul>
+<li><p>整个强化学习模块采用的为off-policy的方式进行数据的采集和训练，因此添加了<strong>ex-buffe</strong>和<strong>重要性采样</strong></p>
+<p>在重要性采样的过程中基于<strong>V-trace限制了ratio比值为(0,1)</strong></p></li>
+<li><p>对于advatage的计算使用了<strong>UPGO</strong>方法：</p>
+<p><img
+src="/img/alphastar%E6%95%B4%E7%90%86/image-20230809153437125.png" /></p></li>
+</ul>
+<h4 id="价值网络训练">2.2 价值网络训练</h4>
+<ul>
+<li>依然采用mse计算Q和V的拟合度</li>
+<li>对于Q的计算采用<strong>TD(λ)</strong>算法</li>
+<li><strong>将自身observations和对手的observations一起纳入输入量</strong>，综合自身和对手的信息得到评价值</li>
+</ul>
+<h3 id="模仿学习">3. 模仿学习</h3>
+<p><img
+src="/img/alphastar%E6%95%B4%E7%90%86/image-20230809155007522.png" /></p>
+<ol type="1">
+<li>由于在强化学习过程中，只有胜利或者失败才能获得一个较高的reward，在训练过程中存在<strong>稀疏奖励</strong>的问题，采用模仿学习的方法，基于人类经验给予<strong>伪奖励</strong>。</li>
+<li>若agent的动作或者当前的observations人类经验中出现过，则基于一个正奖励。</li>
+</ol>
+<h3 id="联盟训练">4. 联盟训练</h3>
+<h4 id="self-play">4.1 self-play</h4>
+<p>方法：自己和自己进行博弈</p>
+<p>缺陷：容易行程<strong>策略循环</strong></p>
+<p>改进方法：FSP（ficitious
+self-play），训练过程中存下若干快照，从而形成种群，均匀的在种群中挑选对手进行对战。</p>
+<p>FSP缺陷：在种群中存在若干太菜的对手，对战胜率为100%，浪费时间没有训练意义</p>
+<h4 id="pfspprioritized-ficitious-self-play">4.2 PFSP（prioritized
+ficitious self-play）</h4>
+<p>方法：按照胜率从种群中挑选对手，给高手一个高概率被挑选的机会，即agent更倾向于与高手对抗</p>
+<p>A（target agent）挑选B的几率：</p>
+<p><img
+src="/img/alphastar%E6%95%B4%E7%90%86/image-20230809161036518.png" /></p>
+<p><strong>对于P(A beats
+B)采用ELO算法采用隐藏分机制【需要大量比赛得到一个客观的值】</strong></p>
+<p><img
+src="/img/alphastar%E6%95%B4%E7%90%86/image-20230809174339454.png" /></p>
+<h4 id="league-training">4.3 league training</h4>
+<p>AlphaStar将所有的agent分为三类：</p>
+<ul>
+<li>main agent: 重点训练的agent即target agent</li>
+<li>league exploiter: 与整个league对战，用于发现全局弱点</li>
+<li>main exploiter: 与当前main agent或者历史main agent对战，用于发现main
+agent的弱点</li>
+</ul>
+<p>对战方式：</p>
+<ul>
+<li><p>main agent训练：</p>
+<p>（1） 个数设置</p>
+<p>​ 每个种族各一个（SW2游戏中共三个种族，一个种族设置一个）</p>
+<p>（2）对手挑选</p>
+<ol type="1">
+<li>50%从league里选（选择方法为PFSP，F函数为(<span
+class="math inline">\(f(x) = (1-x)^{p},p=2\)</span>))</li>
+<li>35%与自己对战</li>
+<li>15%与能打败我的league exploiter对战或者历史版本的main
+agent（选择方法为PFSP，F函数为(<span class="math inline">\(f(x) =
+(1-x)^{p},p=2\)</span>))
+<ol type="1">
+<li>若一个历史版本的main agent以70%概率战胜当前main agent说明当前main
+agent退化了</li>
+<li>若main agent以30%打败league exploiter，说明league
+exploiter发现了main agent弱点</li>
+</ol></li>
+</ol>
+<p>（2）存档方式：</p>
+<p>​ 每隔2*1e9个时间步存档一次</p></li>
+<li><p>league exploiter训练：</p>
+<p>（1） 个数设置</p>
+<p>​ 每个种族各2个（共6个）</p>
+<p>（2）对手挑选</p>
+<p>​ 按照PFSP与整个league对战((选择方法为PFSP，F函数为(<span
+class="math inline">\(f(x) = (1-x)^{p},p=2\)</span>)))</p>
+<p>（2）存档方式：</p>
+<ul>
+<li>若该league
+exploiter以70%打败所有agent，或者距离上次存档间隔2*1e9时间步</li>
+<li>每次<strong>存档后</strong>有25%的概率将参数重设为监督学习预训练的参数</li>
+</ul></li>
+<li><p>main exploiter</p>
+<p>（1） 个数设置</p>
+<p>​ 每个种族各1个（共3个）</p>
+<p>（2）对手挑选</p>
+<p>​ step1: 从三个当前main agent随机选择一个，执行step2</p>
+<p>​ step2: 若以高于10%的概率战胜他则，进行对战，否则执行step3</p>
+<p>​ step3: 从所有历史版本的main
+agent按照PFSP（选择方法为PFSP，F函数为(<span class="math inline">\(f(x)
+= (1-x)x\)</span>))中挑选对手进行对战</p>
+<p>​</p>
+<p>（2）存档方式：</p>
+<ul>
+<li>若该main exploiter以70%打败所有main
+agent，或者距离上次存档间隔4*1e9时间步</li>
+<li>每次存档后就重设为预训练参数</li>
+</ul></li>
+</ul>
+<h3 id="消融实验探讨">5. 消融实验探讨</h3>
+<h4 id="league构成消融">5.1 league构成消融</h4>
+<p><img
+src="/img/alphastar%E6%95%B4%E7%90%86/image-20230809172209823.png" /></p>
+<h4 id="人类经验使用方式消融实验">5.2 人类经验使用方式消融实验</h4>
+<p><img
+src="/img/alphastar%E6%95%B4%E7%90%86/image-20230809172329570.png" /></p>
+<p>​</p>
+<h4 id="对手observations消融">5.3 对手observations消融</h4>
+<figure>
+<img src="/img/alphastar%E6%95%B4%E7%90%86/image-20230809172433587.png"
+alt="image-20230809172433587" />
+<figcaption aria-hidden="true">image-20230809172433587</figcaption>
+</figure>
+</article><div class="post-copyright"><div class="post-copyright__author"><span class="post-copyright-meta">文章作者: </span><span class="post-copyright-info"><a href="https://ychhh-1114.github.io">Yue C.H.</a></span></div><div class="post-copyright__type"><span class="post-copyright-meta">文章链接: </span><span class="post-copyright-info"><a href="https://ychhh-1114.github.io/2023/08/10/AlphaStar/">https://ychhh-1114.github.io/2023/08/10/AlphaStar/</a></span></div><div class="post-copyright__notice"><span class="post-copyright-meta">版权声明: </span><span class="post-copyright-info">本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" target="_blank">CC BY-NC-SA 4.0</a> 许可协议。转载请注明来自 <a href="https://ychhh-1114.github.io" target="_blank">Yue C.H. Site</a>！</span></div></div><div class="tag_share"><div class="post-meta__tag-list"><a class="post-meta__tags" href="/tags/RL/">RL</a><a class="post-meta__tags" href="/tags/DL/">DL</a><a class="post-meta__tags" href="/tags/ML/">ML</a></div><div class="post_share"><div class="social-share" data-image="/img/a.jpg" data-sites="facebook,twitter,wechat,weibo,qq"></div><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/butterfly-extsrc/sharejs/dist/css/share.min.css" media="print" onload="this.media='all'"><script src="https://cdn.jsdelivr.net/npm/butterfly-extsrc/sharejs/dist/js/social-share.min.js" defer></script></div></div><nav class="pagination-post" id="pagination"><div class="prev-post pull-left"><a href="/2023/09/05/%E7%9F%A5%E8%AF%86%E8%92%B8%E9%A6%8F/" title="知识蒸馏"><div class="cover" style="background: var(--default-bg-color)"></div><div class="pagination-info"><div class="label">上一篇</div><div class="prev_info">知识蒸馏</div></div></a></div><div class="next-post pull-right"><a href="/2022/10/21/javaSpring/" title="JavaSpring学习笔记_2022年版"><div class="cover" style="background: var(--default-bg-color)"></div><div class="pagination-info"><div class="label">下一篇</div><div class="next_info">JavaSpring学习笔记_2022年版</div></div></a></div></nav><div class="relatedPosts"><div class="headline"><i class="fas fa-thumbs-up fa-fw"></i><span>相关推荐</span></div><div class="relatedPosts-list"><div><a href="/2023/09/19/SAC%20Algorithm/" title="SAC算法理解"><div class="cover" style="background: var(--default-bg-color)"></div><div class="content is-center"><div class="date"><i class="far fa-calendar-alt fa-fw"></i> 2023-09-19</div><div class="title">SAC算法理解</div></div></a></div><div><a href="/2023/09/05/%E7%9F%A5%E8%AF%86%E8%92%B8%E9%A6%8F/" title="知识蒸馏"><div class="cover" style="background: var(--default-bg-color)"></div><div class="content is-center"><div class="date"><i class="far fa-calendar-alt fa-fw"></i> 2023-09-05</div><div class="title">知识蒸馏</div></div></a></div></div></div></div><div class="aside-content" id="aside-content"><div class="card-widget card-info"><div class="is-center"><div class="avatar-img"><img src="/img/a.jpg" onerror="this.onerror=null;this.src='/img/friend_404.gif'" alt="avatar"/></div><div class="author-info__name">Yue C.H.</div><div class="author-info__description">去光荣的失败</div></div><div class="card-info-data site-data is-center"><a href="/archives/"><div class="headline">文章</div><div class="length-num">13</div></a><a href="/tags/"><div class="headline">标签</div><div class="length-num">20</div></a><a href="/categories/"><div class="headline">分类</div><div class="length-num">0</div></a></div><a id="card-info-btn" target="_blank" rel="noopener" href="https://github.com/Ychhh-1114"><i class="fab fa-github"></i><span>Follow Me</span></a><div class="card-info-social-icons is-center"><a class="social-icon" href="https://github.com/Ychhh-1114" target="_blank" title="Github"><i class="fab fa-github"></i></a><a class="social-icon" href="mailto:1325650083@qq.com" target="_blank" title="Email"><i class="fas fa-envelope-open-text"></i></a></div></div><div class="sticky_layout"><div class="card-widget" id="card-toc"><div class="item-headline"><i class="fas fa-stream"></i><span>目录</span><span class="toc-percentage"></span></div><div class="toc-content is-expand"><ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#alphastar%E6%95%B4%E7%90%86"><span class="toc-number">1.</span> <span class="toc-text">AlphaStar整理</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E7%9B%91%E7%9D%A3%E5%AD%A6%E4%B9%A0%E9%A2%84%E8%AE%AD%E7%BB%83%E8%BF%87%E7%A8%8B"><span class="toc-number">1.1.</span> <span class="toc-text">1. 监督学习（预训练过程）</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%BC%BA%E5%8C%96%E5%AD%A6%E4%B9%A0"><span class="toc-number">1.2.</span> <span class="toc-text">2. 强化学习</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#%E7%AD%96%E7%95%A5%E7%BD%91%E7%BB%9C%E8%AE%AD%E7%BB%83"><span class="toc-number">1.2.1.</span> <span class="toc-text">2.1 策略网络训练</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E4%BB%B7%E5%80%BC%E7%BD%91%E7%BB%9C%E8%AE%AD%E7%BB%83"><span class="toc-number">1.2.2.</span> <span class="toc-text">2.2 价值网络训练</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%A8%A1%E4%BB%BF%E5%AD%A6%E4%B9%A0"><span class="toc-number">1.3.</span> <span class="toc-text">3. 模仿学习</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E8%81%94%E7%9B%9F%E8%AE%AD%E7%BB%83"><span class="toc-number">1.4.</span> <span class="toc-text">4. 联盟训练</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#self-play"><span class="toc-number">1.4.1.</span> <span class="toc-text">4.1 self-play</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#pfspprioritized-ficitious-self-play"><span class="toc-number">1.4.2.</span> <span class="toc-text">4.2 PFSP（prioritized
+ficitious self-play）</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#league-training"><span class="toc-number">1.4.3.</span> <span class="toc-text">4.3 league training</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%B6%88%E8%9E%8D%E5%AE%9E%E9%AA%8C%E6%8E%A2%E8%AE%A8"><span class="toc-number">1.5.</span> <span class="toc-text">5. 消融实验探讨</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#league%E6%9E%84%E6%88%90%E6%B6%88%E8%9E%8D"><span class="toc-number">1.5.1.</span> <span class="toc-text">5.1 league构成消融</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E4%BA%BA%E7%B1%BB%E7%BB%8F%E9%AA%8C%E4%BD%BF%E7%94%A8%E6%96%B9%E5%BC%8F%E6%B6%88%E8%9E%8D%E5%AE%9E%E9%AA%8C"><span class="toc-number">1.5.2.</span> <span class="toc-text">5.2 人类经验使用方式消融实验</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%AF%B9%E6%89%8Bobservations%E6%B6%88%E8%9E%8D"><span class="toc-number">1.5.3.</span> <span class="toc-text">5.3 对手observations消融</span></a></li></ol></li></ol></li></ol></div></div><div class="card-widget card-recent-post"><div class="item-headline"><i class="fas fa-history"></i><span>最新文章</span></div><div class="aside-list"><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2024/05/06/Mybatis%E9%80%86%E5%90%91%E5%B7%A5%E7%A8%8B/" title="Mybatis逆向工程">Mybatis逆向工程</a><time datetime="2024-05-06T12:53:11.000Z" title="发表于 2024-05-06 20:53:11">2024-05-06</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2024/05/06/Redis%20Note/" title="Redis Note">Redis Note</a><time datetime="2024-05-06T12:51:11.000Z" title="发表于 2024-05-06 20:51:11">2024-05-06</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2024/05/06/Spring%E7%9B%B8%E5%85%B3%E6%B3%A8%E8%A7%A3/" title="Annotation Points">Annotation Points</a><time datetime="2024-05-06T12:50:11.000Z" title="发表于 2024-05-06 20:50:11">2024-05-06</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2024/05/06/SpringBoot%20Note/" title="SpringBoot Note">SpringBoot Note</a><time datetime="2024-05-06T12:48:11.000Z" title="发表于 2024-05-06 20:48:11">2024-05-06</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2024/04/19/ssm_note/" title="SSM踩坑笔记 -（在更中）">SSM踩坑笔记 -（在更中）</a><time datetime="2024-04-19T10:14:21.000Z" title="发表于 2024-04-19 18:14:21">2024-04-19</time></div></div></div></div></div></div></main><footer id="footer"><div id="footer-wrap"><div class="copyright">&copy;2020 - 2024 By Yue C.H.</div><div class="framework-info"><span>框架 </span><a target="_blank" rel="noopener" href="https://hexo.io">Hexo</a><span class="footer-separator">|</span><span>主题 </span><a target="_blank" rel="noopener" href="https://github.com/jerryc127/hexo-theme-butterfly">Butterfly</a></div></div></footer></div><div id="rightside"><div id="rightside-config-hide"><button id="readmode" type="button" title="阅读模式"><i class="fas fa-book-open"></i></button><button id="darkmode" type="button" title="浅色和深色模式转换"><i class="fas fa-adjust"></i></button><button id="hide-aside-btn" type="button" title="单栏和双栏切换"><i class="fas fa-arrows-alt-h"></i></button></div><div id="rightside-config-show"><button id="rightside_config" type="button" title="设置"><i class="fas fa-cog fa-spin"></i></button><button class="close" id="mobile-toc-button" type="button" title="目录"><i class="fas fa-list-ul"></i></button><button id="go-up" type="button" title="回到顶部"><span class="scroll-percent"></span><i class="fas fa-arrow-up"></i></button></div></div><div><script src="/js/utils.js"></script><script src="/js/main.js"></script><script src="https://cdn.jsdelivr.net/npm/@fancyapps/ui/dist/fancybox/fancybox.umd.min.js"></script><div class="js-pjax"><script>if (!window.MathJax) {
+  window.MathJax = {
+    tex: {
+      inlineMath: [['$', '$'], ['\\(', '\\)']],
+      tags: 'ams'
+    },
+    chtml: {
+      scale: 1.1
+    },
+    options: {
+      renderActions: {
+        findScript: [10, doc => {
+          for (const node of document.querySelectorAll('script[type^="math/tex"]')) {
+            const display = !!node.type.match(/; *mode=display/)
+            const math = new doc.options.MathItem(node.textContent, doc.inputJax[0], display)
+            const text = document.createTextNode('')
+            node.parentNode.replaceChild(text, node)
+            math.start = {node: text, delim: '', n: 0}
+            math.end = {node: text, delim: '', n: 0}
+            doc.math.push(math)
+          }
+        }, '']
+      }
+    }
+  }
+  
+  const script = document.createElement('script')
+  script.src = 'https://cdn.jsdelivr.net/npm/mathjax/es5/tex-mml-chtml.min.js'
+  script.id = 'MathJax-script'
+  script.async = true
+  document.head.appendChild(script)
+} else {
+  MathJax.startup.document.state(0)
+  MathJax.texReset()
+  MathJax.typesetPromise()
+}</script></div><script async data-pjax src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script><div id="algolia-search"><div class="search-dialog"><nav class="search-nav"><span class="search-dialog-title">搜索</span><button class="search-close-button"><i class="fas fa-times"></i></button></nav><div class="search-wrap"><div id="algolia-search-input"></div><hr/><div id="algolia-search-results"><div id="algolia-hits"></div><div id="algolia-pagination"></div><div id="algolia-info"><div class="algolia-stats"></div><div class="algolia-poweredBy"></div></div></div></div></div><div id="search-mask"></div><script src="https://cdn.jsdelivr.net/npm/algoliasearch/dist/algoliasearch-lite.umd.min.js"></script><script src="https://cdn.jsdelivr.net/npm/instantsearch.js/dist/instantsearch.production.min.js"></script><script src="/js/search/algolia.js"></script></div></div></body></html>
